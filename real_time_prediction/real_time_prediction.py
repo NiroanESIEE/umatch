@@ -8,81 +8,81 @@ import pickle
 
 # EYES
 def dist_between_eyebrow(shape):
-    den = abs(float(shape[17][0] - shape[1][0]))
+    den = abs(float(shape[16][0] - shape[0][0]))
     if den == 0:
         den = 0.1
-    dist = abs(float(shape[23][0] - shape[22][0])) / den
+    dist = abs(float(shape[22][0] - shape[21][0])) / den
     return dist
 
 def dist_corner_eye_right(shape):
-    den = abs(float(shape[16][1] - shape[23][1]))
+    den = abs(float(shape[15][1] - shape[22][1]))
     if den == 0:
         den = 0.1
-    dist = abs(float(shape[43][1] - shape[23][1])) / den
+    dist = abs(float(shape[42][1] - shape[22][1])) / den
     return dist
 
 
 def dist_corner_eye_left(shape):
-    den = abs(float(shape[2][1] - shape[22][1]))
+    den = abs(float(shape[1][1] - shape[21][1]))
     if den == 0:
         den = 0.1
-    dist = abs(float(shape[40][1] - shape[22][1])) / den
+    dist = abs(float(shape[39][1] - shape[21][1])) / den
     return dist
 
 
 def dist_eyebrow_eye_right(shape):
-    den = abs(float(shape[42][1] - shape[20][1]))
+    den = abs(float(shape[41][1] - shape[19][1]))
     if den == 0:
         den = 0.1
-    dist = abs(float(shape[38][1] - shape[20][1])) / den
+    dist = abs(float(shape[37][1] - shape[19][1])) / den
     return dist
 
 
 def dist_eyebrow_eye_left(shape):
-    den = abs(float(shape[47][1] - shape[25][1]))
+    den = abs(float(shape[46][1] - shape[24][1]))
     if den == 0:
         den = 0.1
-    dist = abs(float(shape[45][1] - shape[25][1])) / den
+    dist = abs(float(shape[44][1] - shape[24][1])) / den
     return dist
 
 
 def dist_open_eye_right(shape):
-    den = abs(float(shape[46][0] - shape[43][0]))
+    den = abs(float(shape[45][0] - shape[42][0]))
     if den == 0:
         den = 0.1
-    dist = abs(float(shape[48][1] - shape[44][1])) / den
+    dist = abs(float(shape[47][1] - shape[43][1])) / den
     return dist
 
 
 def dist_open_eye_left(shape):
-    den = abs(float(shape[40][0] - shape[37][0]))
+    den = abs(float(shape[39][0] - shape[36][0]))
     if den == 0:
         den = 0.1
-    dist = abs(float(shape[41][1] - shape[39][1])) / den
+    dist = abs(float(shape[40][1] - shape[38][1])) / den
     return dist
 
 
 # NOSE
 def dist_nose_width(shape):
-    den = abs(float(shape[15][0] - shape[3][0]))
+    den = abs(float(shape[14][0] - shape[2][0]))
     if den == 0:
         den = 0.1
-    dist = abs(float(shape[36][0] - shape[32][0])) / den
+    dist = abs(float(shape[35][0] - shape[31][0])) / den
     return dist
 
 
 def dist_nose_height(shape):
-    den = abs(float(shape[7][1] - shape[28][1]))
+    den = abs(float(shape[6][1] - shape[27][1]))
     if den == 0:
         den = 0.1
-    dist = abs(float(shape[32][1] - shape[28][1])) / den
+    dist = abs(float(shape[31][1] - shape[27][1])) / den
     return dist
 
 
 # MOUTH
 def dist_mouth(shape):
-    width = abs(shape[55][0] - shape[49][0])
-    height = abs(shape[58][1] - shape[52][1])
+    width = abs(shape[54][0] - shape[48][0])
+    height = abs(shape[57][1] - shape[51][1])
     if height == 0:
         height = 0.1
 
@@ -91,8 +91,8 @@ def dist_mouth(shape):
 
 
 def dist_min_mouth(shape):
-    width = abs(shape[55][0] - shape[49][0])
-    height = abs(shape[67][1] - shape[63][1])
+    width = abs(shape[54][0] - shape[48][0])
+    height = abs(shape[66][1] - shape[62][1])
     if height == 0:
         height = 0.1
 
@@ -101,35 +101,36 @@ def dist_min_mouth(shape):
 
 
 def dist_mouth_width(shape):
-    den = abs(float(shape[14][0] - shape[4][0]))
+    den = abs(float(shape[13][0] - shape[3][0]))
     if den == 0:
         den = 0.1
-    dist = abs(float(shape[55][0] - shape[49][0])) / den
+    dist = abs(float(shape[54][0] - shape[48][0])) / den
     return dist
 
 
 def dist_mouth_cheeks_right(shape):
-    den = abs(float(shape[14][0] - shape[4][0]))
+    den = abs(float(shape[13][0] - shape[3][0]))
     if den == 0:
         den = 0.1
-    dist = abs(float(shape[14][0] - shape[55][0])) / den
+    dist = abs(float(shape[13][0] - shape[54][0])) / den
     return dist
 
 
 def dist_mouth_cheeks_left(shape):
-    den = abs(float(shape[14][0] - shape[4][0]))
+    den = abs(float(shape[13][0] - shape[3][0]))
     if den == 0:
         den = 0.1
-    dist = abs(float(shape[49][0] - shape[4][0])) / den
+    dist = abs(float(shape[48][0] - shape[3][0])) / den
     return dist
 
 
 def dist_mouth_corner(shape):
-    den = abs(float(shape[9][1] - shape[52][1]))
+    den = abs(float(shape[8][1] - shape[51][1]))
     if den == 0:
         den = 0.1
-    dist = abs(float(shape[55][1] - shape[52][1])) / den
+    dist = abs(float(shape[54][1] - shape[51][1])) / den
     return dist
+
 
 # initialize dlib's face detector (HOG-based) and then create
 # the facial landmark predictor
