@@ -1,6 +1,4 @@
-from OpenGL.GL import *
 import numpy as np
-
 
 class readOBJ(object):
 
