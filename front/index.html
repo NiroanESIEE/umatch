@@ -5,6 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>UMatch</title>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
@@ -13,60 +14,119 @@
 </head>
 <body>
 
-<!-- Navigation -->
-<nav class="navbar navbar-expand-md navbar-light bg-light sticky-top"></nav>
-<div class="container-fluid">
-    <a class="navbar-brand" href="#"><img id="logo" src="img/Logo_UMATCH.png"></a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarResponsive">
-        <ul class="navbar-nav ml-auto">
-            <li ckass="nav-item active">
-                <a class="nav-link" href="#">About</a>
-            </li>
-        </ul>
-    </div>
-</div>
+	<!-- Navigation -->
+	<nav class="navbar navbar-expand-md navbar-light bg-light sticky-top">
+	<div class="container-fluid">
+		<a class="navbar-brand" href="#"><img id="logo" src="img/Logo_UMATCH.png">UMatch</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarResponsive">
+			<ul class="navbar-nav ml-auto">
+				<li ckass="nav-item active">
+					<a class="nav-link" href="#">About</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+	</nav>
+	
+	<!-- Container -->
+	<div class="col-lg-8 col-md-10 center" id="container">
+	
+		<!-- Video -->
+		<video autoplay="true" id="videoElement"></video>
+		
+		<!-- Screen Shoot -->
+		<div id="divScreenShot">
+			<canvas id="canvasScreenShoot">
+				<image id="screenShootImageInCanvas"></image>
+			</canvas>
+			<div id="cancelScreenShotDiv" onclick="cancelScreenShootImageFunction()">
+				<image id="cancelScreenShotImage" src="Logos/delete.png"></image>
+			</div>
+		</div>
+		
+		<!-- Container Banner-->
+		<div id="containerBanner">
+			<div class="switchContainer">
+				<div class="switch white">
+					<input type="radio" name="switch" id="switch-off">
+					<input type="radio" name="switch" id="switch-on" checked>
+					<label for="switch-off">Photo</label>
+					<label for="switch-on">Video</label>
+					<span class="toggle"></span>
+				</div>
+			</div>
+			<div id="divTakePhoto" onclick="takePhotoFunction()">
+				<image id="takePictureImage" src="img/take_photo_image.png"></image>
+			</div>
+			<div id="divFullScreen" onclick="displayFullScreenFunction()">
+				<image id="fullScreenImage" src="img/full_screen_image.png"></image>
+			</div>
+		</div>
+	</div>
+	
+	<!-- Choice -->
+	<div id="choice">
+		<div id="divCameraPhoto" onclick="divCameraPhotofunction()">
+			<img id="cameraPhoto" src="img/camera_image.png"></img>
+		</div>
+		<div id="divUploadPhoto" onclick="divUploadPhotofunction()">
+			<img id="uploadPhoto" src="img/images_image.png"></img>
+		</div>
+	</div>
+	
+	<script>
+	
+		var enableVideo = true;
+		var autorisationVideo = false;
+		if (enableVideo == true) {
+			divCameraPhotofunction();
+		}
+		else {
+			divUploadPhotofunction();
+		}
+		
+		//Affichage de la partie video lors du clic
+		function divCameraPhotofunction(){
 
+			document.getElementById("videoElement").style.visibility = "visible";
+			document.getElementById("containerBanner").style.visibility = "visible";
 
-<!--- Image Slider -->
+			//document.getElementById("imageElementDiv").style.visibility = "hidden";
+			document.getElementById("divScreenShot").style.visibility = "hidden";
 
+			/*var yellowColor = "#FDFD96";
+			var grayColor = "#E8E8E8";
+			document.getElementById("divCameraPhoto").style.backgroundColor = yellowColor;
+			document.getElementById("divUploadPhoto").style.backgroundColor = grayColor;*/
 
-<!--- Jumbotron -->
+			var video = document.querySelector("#videoElement");
+			//Si jamais effectuee autorisation de la video alors demande
+			if (autorisationVideo == false) {
+				if (navigator.mediaDevices.getUserMedia) {
+					navigator.mediaDevices.getUserMedia({video: true})
+					.then(function(stream) {
+						video.srcObject = stream;
+						video.play();
+					})
+					.catch(function(err0r) {
+						console.log("Something went wrong!");
+					});
+				}
+				autorisationVideo = true;
+			}
+			//Si deja autorisation de la video
+			else {
+				video.play();
+			}
 
-
-<!--- Welcome Section -->
-
-
-<!--- Three Column Section -->
-
-
-<!--- Two Column Section -->
-
-
-<!--- Fixed background -->
-
-
-<!--- Emoji Section -->
-
-  
-<!--- Meet the team -->
-
-
-<!--- Cards -->
-
-
-<!--- Two Column Section -->
-
-
-<!--- Connect -->
-
-
-<!--- Footer -->
-
-
-
+	}
+		
+		
+		
+	</script>
 
 </body>
 </html>
