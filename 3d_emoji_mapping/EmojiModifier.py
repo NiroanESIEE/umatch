@@ -39,7 +39,8 @@ def capture_screen(display, filename):
     glReadBuffer(GL_FRONT)
     data = glReadPixels(0, 0, display[0], display[1], GL_RGBA, GL_UNSIGNED_BYTE)
     image = Image.frombytes("RGBA", display, data)
-    image = image.transpose(Image.ROTATE_180)
+    #image = image.transpose(Image.ROTATE_180)
+    image = image.transpose(Image.FLIP_TOP_BOTTOM)
     image.save(filename, 'png')
 
 
@@ -59,23 +60,25 @@ def main(filename):
     pygame.display.set_caption("Nez ro anne")
 
     init_open_gl(display, object_pos)
-
+    
+    """
     while True:
         angle += 2
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
+    """
+    
+    refresh_open_gl()
 
-        refresh_open_gl()
+    draw_object(emoji, new_light_pos)
 
-        draw_object(emoji, new_light_pos)
-
-        if angle == 10:
-            capture_screen(display, filename + ".png")
-
-        pygame.display.flip()
-        pygame.time.wait(10)
+    pygame.display.flip()
+    #pygame.time.wait(10)
+    capture_screen(display, filename + ".png")
+    pygame.quit()
+    quit()
 
 
 if __name__ == '__main__':
