@@ -101,7 +101,8 @@ Extra (xl) large devices (large desktops, 1200px and up)
 
 #container {
 	position:relative;
-	top:2em;
+	top:1.5em;
+	height:100%;
 }
 
 #videoElement {
@@ -116,7 +117,7 @@ Extra (xl) large devices (large desktops, 1200px and up)
 
 #choice {
 	position:relative;
-	top:2em;
+	top:-20px;
 	left:45%;
 	width:150px;
 	height:80px;
@@ -272,11 +273,25 @@ input[type="radio"] {
 	height:35px;
 }
 
+#divRecordVideo {
+	position:relative;
+	width:35px;
+	height:35px;
+	left:46.9%;
+	top:-30px;
+	visibility:hidden;
+}
+
+#recordVideoImage {
+	width:37px;
+	height:37px;
+}
+
 #divFullScreen {
 	position:relative;
 	width:35px;
 	height:35px;
-	top:-30px;
+	top:-65px;
 	float:right;
 	margin-right:10px;
 }

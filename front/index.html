@@ -32,7 +32,7 @@
 	</nav>
 	
 	<!-- Container -->
-	<div class="col-lg-8 col-md-10 center" id="container">
+	<div class="col-lg-6 col-md-10 center" id="container">
 	
 		<!-- Video -->
 		<video autoplay="true" id="videoElement"></video>
@@ -51,15 +51,18 @@
 		<div id="containerBanner">
 			<div class="switchContainer">
 				<div class="switch white">
-					<input type="radio" name="switch" id="switch-off">
-					<input type="radio" name="switch" id="switch-on" checked>
-					<label for="switch-off">Photo</label>
-					<label for="switch-on">Video</label>
+					<input type="radio" name="switch" id="switch-photo" onclick="switchPhotoClicked()" checked>
+					<input type="radio" name="switch" id="switch-video" onclick="switchVideoClicked()">
+					<label for="switch-photo">Photo</label>
+					<label for="switch-video">Video</label>
 					<span class="toggle"></span>
 				</div>
 			</div>
 			<div id="divTakePhoto" onclick="takePhotoFunction()">
 				<image id="takePictureImage" src="img/take_photo_image.png"></image>
+			</div>
+			<div id="divRecordVideo" onclick="recordVideoFunction()">
+				<image id="recordVideoImage" src="img/record_video_image.png"></image>
 			</div>
 			<div id="divFullScreen" onclick="displayFullScreenFunction()">
 				<image id="fullScreenImage" src="img/full_screen_image.png"></image>
@@ -96,12 +99,24 @@
 
 			//document.getElementById("imageElementDiv").style.visibility = "hidden";
 			document.getElementById("divScreenShot").style.visibility = "hidden";
-
-			/*var yellowColor = "#FDFD96";
-			var grayColor = "#E8E8E8";
-			document.getElementById("divCameraPhoto").style.backgroundColor = yellowColor;
-			document.getElementById("divUploadPhoto").style.backgroundColor = grayColor;*/
-
+			
+			var divCameraPhotoImage = document.getElementById("divCameraPhoto");
+			var cameraPhotoImage = document.getElementById("cameraPhoto");
+			var divUploadPhotoImage = document.getElementById("divUploadPhoto");
+			var uploadPhotoImage = document.getElementById("uploadPhoto");
+			
+			divCameraPhotoImage.style.height = "80px";
+			divCameraPhotoImage.style.width = "80px";
+			cameraPhotoImage.style.height = "80px";
+			cameraPhotoImage.style.width = "80px";
+			
+			divUploadPhotoImage.style.height = "60px";
+			divUploadPhotoImage.style.width = "60px";
+			uploadPhotoImage.style.height = "60px";
+			uploadPhotoImage.style.width = "60px";
+			
+			document.getElementById("choice").style.left = "45%";
+			
 			var video = document.querySelector("#videoElement");
 			//Si jamais effectuee autorisation de la video alors demande
 			if (autorisationVideo == false) {
@@ -122,10 +137,47 @@
 				video.play();
 			}
 
-	}
+		}
 		
+		function divUploadPhotofunction(){
+
+			document.getElementById("videoElement").style.visibility = "hidden";
+			document.getElementById("containerBanner").style.visibility = "hidden";
+
+			//document.getElementById("imageElementDiv").style.visibility = "visible";
+			document.getElementById("divScreenShot").style.visibility = "hidden";
+			
+			var divCameraPhotoImage = document.getElementById("divCameraPhoto");
+			var cameraPhotoImage = document.getElementById("cameraPhoto");
+			var divUploadPhotoImage = document.getElementById("divUploadPhoto");
+			var uploadPhotoImage = document.getElementById("uploadPhoto");
+			
+			divCameraPhotoImage.style.height = "60px";
+			divCameraPhotoImage.style.width = "60px";
+			cameraPhotoImage.style.height = "60px";
+			cameraPhotoImage.style.width = "60px";
+			
+			divUploadPhotoImage.style.height = "80px";
+			divUploadPhotoImage.style.width = "80px";
+			uploadPhotoImage.style.height = "80px";
+			uploadPhotoImage.style.width = "80px";
+			
+			document.getElementById("choice").style.left = "41%";
+
+			var video = document.querySelector("#videoElement");
+			video.pause();
+		}
 		
+		function switchPhotoClicked() {
+			document.getElementById("divTakePhoto").style.visibility = "visible";
+			document.getElementById("divRecordVideo").style.visibility = "hidden";
+		}
 		
+		function switchVideoClicked() {
+			document.getElementById("divTakePhoto").style.visibility = "hidden";
+			document.getElementById("divRecordVideo").style.visibility = "visible";
+		}
+	
 	</script>
 
 </body>
