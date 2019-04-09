@@ -35,15 +35,15 @@
 	<div class="col-lg-6 col-md-10 center" id="container">
 	
 		<!-- Video -->
-		<video autoplay="true" id="videoElement"></video>
+		<video class="col-lg-12 col-md-12 center" autoplay="true" id="videoElement"></video>
 		
 		<!-- Screen Shoot -->
-		<div id="divScreenShot">
-			<canvas id="canvasScreenShoot">
+		<div class="col-lg-12 col-md-12 center" id="divScreenShot">
+			<canvas class="col-lg-12 col-md-12 center" id="canvasScreenShoot">
 				<image id="screenShootImageInCanvas"></image>
 			</canvas>
 			<div id="cancelScreenShotDiv" onclick="cancelScreenShootImageFunction()">
-				<image id="cancelScreenShotImage" src="Logos/delete.png"></image>
+				<image id="cancelScreenShotImage" src="img/delete_image.png"></image>
 			</div>
 		</div>
 		
@@ -176,6 +176,24 @@
 		function switchVideoClicked() {
 			document.getElementById("divTakePhoto").style.visibility = "hidden";
 			document.getElementById("divRecordVideo").style.visibility = "visible";
+		}
+		
+		function takePhotoFunction() {
+			document.getElementById("videoElement").style.visibility = "visible";
+			document.getElementById('divScreenShot').style.visibility = "visible";
+			
+			//const screenshotButton = document.getElementById('divSavePhoto');
+			const img = document.getElementById('screenShootImageInCanvas');
+			
+			const video = document.getElementById('videoElement');
+			const canvas = document.getElementById('canvasScreenShoot');
+			
+			/*canvas.width = 750;
+			canvas.height = 562;*/
+			canvas.style.transform = "scaleX(-1)";
+			canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+			
+			img.src = canvas.toDataURL('image/webp');
 		}
 	
 	</script>
