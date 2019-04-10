@@ -312,6 +312,9 @@ input[type="radio"] {
 	top:0;
 	text-align:center;
 	height:91%;
+	
+	object-fit: cover;
+    /*min-height: 470px;*/
 }
 
 #cancelScreenShotDiv {
