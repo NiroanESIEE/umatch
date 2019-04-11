@@ -9,14 +9,14 @@ from PIL import Image
 
 class EmojiModifier(object):
     
-    def __init__(self, filename, mouth, eyes, rotation):
+    def __init__(self, filename, mouth, eyes, rotations):
         
         self.image = 0
         
         emoji = ObjectReader.ObjectReader("3d_object/" + filename + ".obj", "3d_object/" + filename + ".mtl")
 
         display = (500, 500)
-        object_pos = np.array([0.0, -2.5, -9])
+        object_pos = np.array([0.0, -2.5, -11])
         light_pos = np.array([10, 3, -15])
         angle = 0
     
@@ -28,6 +28,8 @@ class EmojiModifier(object):
         pygame.display.set_caption("Nez ro anne")
     
         self.init_open_gl(display, object_pos)
+        glRotatef(rotations[1], 0, 1, 0)
+        glRotatef(rotations[2], 0, 0, 1)
         
         self.refresh_open_gl()
     
@@ -59,8 +61,11 @@ class EmojiModifier(object):
             color = np.array(emoji.materials[material]['Kd'])
             intensity = 0.1
             for face in faces:
+                """
                 normal = emoji.face_normals[face]
                 output_color = (intensity * color * np.dot(normal, new_light_pos)) / 255
+                """
+                output_color = color
                 glColor3fv(output_color)
                 for vertex in emoji.faces[face]:
                     glVertex3fv(emoji.vertices[vertex])

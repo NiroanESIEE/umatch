@@ -7,11 +7,11 @@ class ObjectReader(object):
         self.faces = []
         self.colors = []
         self.vertex_normals = []
+        self.face_vertex_normals = {}
         self.face_normals = []
         self.materials_faces = {}
         self.materials = {}
         self.vts = []
-
 
         try:
             fileOBJ = open(file_name_obj)
@@ -36,7 +36,7 @@ class ObjectReader(object):
                     string = line.replace("//", "/-1/")
                     face = []
                     vt = []
-                    vn = []
+                    # vn = []
                     i = string.find(" ") + 1
                     faceLine = string.split(" ")
 
@@ -44,13 +44,23 @@ class ObjectReader(object):
                         faceSplit = faceLine[f].split("/")
                         face.append(int(faceSplit[0]) - 1)
                         vt.append(int(faceSplit[1]) - 1)
-                        vn.append(int(faceSplit[2]) - 1)
+                        # vn.append(int(faceSplit[2]) - 1)
+                        self.face_vertex_normals[int(faceSplit[0]) - 1] = int(faceSplit[2]) - 1
 
                     self.faces.append(tuple(face))
                     lenFaces += 1
                     self.vts.append(tuple(vt))
-                    self.vertex_normals.append(tuple(vn))
+
                     self.materials_faces[key].append(lenFaces - 1)
+                elif line[:3] == "vn ":
+                    index1 = line.find(" ") + 1
+                    index2 = line.find(" ", index1 + 1)
+                    index3 = line.find(" ", index2 + 1)
+
+                    vn = (float(line[index1:index2]), float(line[index2:index3]), float(line[index3:-1]))
+                    vn = (round(vn[0], 3), round(vn[1], 3), round(vn[2], 3))
+                    self.vertex_normals.append(vn)
+
 
             fileOBJ.close()
             fileMTL = open(file_name_mtl)
@@ -75,7 +85,7 @@ class ObjectReader(object):
                 vnsList = []
 
                 for vertex in face:
-                    vnsList.append(self.vertex_normals[vertex])
+                    vnsList.append(self.vertex_normals[self.face_vertex_normals[vertex]])
                 vnsList = np.array(vnsList)
 
                 self.face_normals.append(np.linalg.norm(np.mean(vnsList)))
