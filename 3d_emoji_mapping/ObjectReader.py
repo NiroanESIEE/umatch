@@ -1,8 +1,31 @@
 import numpy as np
 
+
 class ObjectReader(object):
 
     def __init__(self, file_name_obj, file_name_mtl):
+        self.vertices = []
+        self.faces = []
+        self.colors = []
+        self.vertex_normals = []
+        self.face_vertex_normals = {}
+        self.face_normals = []
+        self.materials_faces = {}
+        self.materials = {}
+        self.vts = []
+
+        self.read_obj_file(self, file_name_obj)
+
+    def read_obj_file(self, file_name_obj):
+        try:
+            obj_file = open(file_name_obj)
+
+
+
+        except IOError:
+            print(".obj file not found.")
+
+    def test(self, file_name_obj, file_name_mtl):
         self.vertices = []
         self.faces = []
         self.colors = []
@@ -60,7 +83,6 @@ class ObjectReader(object):
                     vn = (float(line[index1:index2]), float(line[index2:index3]), float(line[index3:-1]))
                     vn = (round(vn[0], 3), round(vn[1], 3), round(vn[2], 3))
                     self.vertex_normals.append(vn)
-
 
             fileOBJ.close()
             fileMTL = open(file_name_mtl)
