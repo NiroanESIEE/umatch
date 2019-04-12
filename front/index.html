@@ -180,7 +180,9 @@
 		
 		function takePhotoFunction() {
 			document.getElementById("videoElement").style.visibility = "visible";
-			document.getElementById('divScreenShot').style.visibility = "visible";
+			document.getElementById("divScreenShot").style.visibility = "visible";
+            document.getElementById("divTakePhoto").style.visibility = "hidden";
+            //document.getElementById("switchContainer").style.visibility = "hidden";
 			
 			//const screenshotButton = document.getElementById('divSavePhoto');
 			const img = document.getElementById('screenShootImageInCanvas');
@@ -194,7 +196,15 @@
 			canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
 			
 			img.src = canvas.toDataURL('image/webp');
+            
+            
 		}
+        
+        function cancelScreenShootImageFunction() {
+            document.getElementById('divScreenShot').style.visibility = "hidden";
+            document.getElementById("divTakePhoto").style.visibility = "visible";
+            //document.getElementById('switchContainer').style.visibility = "visible";
+        }
 	
 	</script>
 
