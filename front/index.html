@@ -32,7 +32,7 @@
 	</nav>
 	
 	<!-- Container -->
-	<div class="col-xl-6 col-lg-6 col-md-10 col-sm-10 col-12 center" id="container">
+	<div class="col-xl-6 col-lg-6 col-md-10 col-sm-10 col-12 center" id="camContainer">
 	
 		<!-- Video -->
 		<video class="col-lg-12 col-md-12 col-sm-12 col-12 center" autoplay="true" id="videoElement"></video>
@@ -49,7 +49,7 @@
 		
 		<!-- Container Banner-->
 		<div id="containerBanner">
-			<div class="switchContainer">
+			<div id="switchContainer" class="switchContainer">
 				<div class="switch white">
 					<input type="radio" name="switch" id="switch-photo" onclick="switchPhotoClicked()" checked>
 					<input type="radio" name="switch" id="switch-video" onclick="switchVideoClicked()">
@@ -57,6 +57,9 @@
 					<label for="switch-video">Video</label>
 					<span class="toggle"></span>
 				</div>
+			</div>
+			<div id="divDownload" onclick="">
+				<image id="downloadImage" src="img/download_image.png"></image>
 			</div>
 			<div id="divTakePhoto" onclick="takePhotoFunction()">
 				<image id="takePictureImage" src="img/take_photo_image.png"></image>
@@ -68,6 +71,31 @@
 				<image id="fullScreenImage" src="img/full_screen_image.png"></image>
 			</div>
 		</div>
+	</div>
+	
+	<div class="col-xl-8 col-lg-8 col-md-10 col-sm-10 col-12 center" id="uploadContainer">
+		<div id="divDisplayListImage">
+		</div>
+		<div id="divUploadContainer">
+			<form id="file-upload-form" class="uploader">
+				<input id="file-upload" type="file" name="fileUpload" accept="image/*" />
+
+				<label for="file-upload" id="file-drag">
+					<img id="file-image" src="#" alt="Preview" class="hidden">
+					<div id="start">
+						<img id="file-upload-btn" src="img/upload_image.png"></img>
+						<div>Drop file here or click to upload.</div>
+						<div id="notimage" class="hidden">Please select an image</div>
+						<!--<span id="file-upload-btn" class="btn btn-primary">Select a file</span>-->
+					</div>
+					<div id="response" class="hidden">
+						<div id="messages"></div>
+					</div>
+				</label>
+			</form>
+		</div>
+		<!-- Upload  -->
+		
 	</div>
 	
 	<!-- Choice -->
@@ -95,10 +123,18 @@
 		function divCameraPhotofunction(){
 
 			document.getElementById("videoElement").style.visibility = "visible";
-			document.getElementById("containerBanner").style.visibility = "visible";
-
-			//document.getElementById("imageElementDiv").style.visibility = "hidden";
 			document.getElementById("divScreenShot").style.visibility = "hidden";
+			document.getElementById("containerBanner").style.visibility = "visible";
+			document.getElementById("switchContainer").style.visibility = "visible";
+			document.getElementById("divFullScreen").style.visibility = "visible";
+			document.getElementById("uploadContainer").style.visibility = "hidden";
+			
+			if (document.getElementById("switch-photo").checked == true) {
+				document.getElementById("divTakePhoto").style.visibility = "visible";
+			}
+			else {
+				document.getElementById("divRecordVideo").style.visibility = "visible";
+			}
 			
 			var divCameraPhotoImage = document.getElementById("divCameraPhoto");
 			var cameraPhotoImage = document.getElementById("cameraPhoto");
@@ -140,11 +176,18 @@
 		}
 		
 		function divUploadPhotofunction(){
-
+		
 			document.getElementById("videoElement").style.visibility = "hidden";
 			document.getElementById("containerBanner").style.visibility = "hidden";
+			document.getElementById("switchContainer").style.visibility = "hidden";
+			document.getElementById("divDownload").style.visibility = "hidden";
+			document.getElementById("divTakePhoto").style.visibility = "hidden";
+			document.getElementById("divRecordVideo").style.visibility = "hidden";
+			document.getElementById("divFullScreen").style.visibility = "hidden";
+			document.getElementById("uploadContainer").style.visibility = "visible";
+			
 
-			//document.getElementById("imageElementDiv").style.visibility = "visible";
+			/*//document.getElementById("imageElementDiv").style.visibility = "visible";
 			document.getElementById("divScreenShot").style.visibility = "hidden";
 			
 			var divCameraPhotoImage = document.getElementById("divCameraPhoto");
@@ -165,8 +208,134 @@
 			document.getElementById("choice").style.left = "41%";
 
 			var video = document.querySelector("#videoElement");
-			video.pause();
+			video.pause();*/
 		}
+		
+		//UPLOAD IMAGES
+		function Upload(){
+			function Init() {
+
+				console.log("Upload Initialised");
+
+				var fileSelect    = document.getElementById('file-upload'),
+						fileDrag      = document.getElementById('file-drag'),
+						submitButton  = document.getElementById('submit-button');
+
+				fileSelect.addEventListener('change', fileSelectHandler, false);
+
+				// Is XHR2 available?
+				var xhr = new XMLHttpRequest();
+				if (xhr.upload) {
+					// File Drop
+					fileDrag.addEventListener('dragover', fileDragHover, false);
+					fileDrag.addEventListener('dragleave', fileDragHover, false);
+					fileDrag.addEventListener('drop', fileSelectHandler, false);
+				}
+			}
+
+			function fileDragHover(e) {
+				var fileDrag = document.getElementById('file-drag');
+
+				e.stopPropagation();
+				e.preventDefault();
+
+				fileDrag.className = (e.type === 'dragover' ? 'hover' : 'modal-body file-upload');
+			}
+
+			function fileSelectHandler(e) {
+				// Fetch FileList object
+				var files = e.target.files || e.dataTransfer.files;
+
+				// Cancel event and hover styling
+				fileDragHover(e);
+
+				// Process all File objects
+				for (var i = 0, f; f = files[i]; i++) {
+					parseFile(f);
+					uploadFile(f);
+				}
+			}
+
+			// Output
+			function output(msg) {
+				// Response
+				var m = document.getElementById('messages');
+				m.innerHTML = msg;
+			}
+
+			function parseFile(file) {
+
+				console.log(file.name);
+				output(
+					'<strong>' + encodeURI(file.name) + '</strong>'
+				);
+
+				// var fileType = file.type;
+				// console.log(fileType);
+				var imageName = file.name;
+
+				var isGood = (/\.(?=gif|jpg|png|jpeg)/gi).test(imageName);
+				if (isGood) {
+					document.getElementById('start').classList.add("hidden");
+					document.getElementById('response').classList.remove("hidden");
+					document.getElementById('notimage').classList.add("hidden");
+					// Thumbnail Preview
+					document.getElementById('file-image').classList.remove("hidden");
+					document.getElementById('file-image').src = URL.createObjectURL(file);
+				}
+				else {
+					document.getElementById('file-image').classList.add("hidden");
+					document.getElementById('notimage').classList.remove("hidden");
+					document.getElementById('start').classList.remove("hidden");
+					document.getElementById('response').classList.add("hidden");
+					document.getElementById("file-upload-form").reset();
+				}
+			}
+
+			function uploadFile(file) {
+
+				var xhr = new XMLHttpRequest(),
+					fileInput = document.getElementById('class-roster-file'),
+					pBar = document.getElementById('file-progress'),
+					fileSizeLimit = 1024; // In MB
+				if (xhr.upload) {
+					// Check if file is less than x MB
+					if (file.size <= fileSizeLimit * 1024 * 1024) {
+						// Progress bar
+						pBar.style.display = 'inline';
+						xhr.upload.addEventListener('loadstart', setProgressMaxValue, false);
+						xhr.upload.addEventListener('progress', updateFileProgress, false);
+
+						// File received / failed
+						xhr.onreadystatechange = function(e) {
+							if (xhr.readyState == 4) {
+								// Everything is good!
+
+								// progress.className = (xhr.status == 200 ? "success" : "failure");
+								// document.location.reload(true);
+							}
+						};
+
+						// Start upload
+						xhr.open('POST', document.getElementById('file-upload-form').action, true);
+						xhr.setRequestHeader('X-File-Name', file.name);
+						xhr.setRequestHeader('X-File-Size', file.size);
+						xhr.setRequestHeader('Content-Type', 'multipart/form-data');
+						xhr.send(file);
+					} else {
+						output('Please upload a smaller file (< ' + fileSizeLimit + ' MB).');
+					}
+				}
+			}
+
+			// Check for the various File API support.
+			if (window.File && window.FileList && window.FileReader) {
+				Init();
+			} else {
+				document.getElementById('file-drag').style.display = 'none';
+			}
+		}
+		Upload();
 		
 		function switchPhotoClicked() {
 			document.getElementById("divTakePhoto").style.visibility = "visible";
@@ -179,10 +348,12 @@
 		}
 		
 		function takePhotoFunction() {
+		
 			document.getElementById("videoElement").style.visibility = "visible";
 			document.getElementById("divScreenShot").style.visibility = "visible";
             document.getElementById("divTakePhoto").style.visibility = "hidden";
-            //document.getElementById("switchContainer").style.visibility = "hidden";
+			document.getElementById("switchContainer").style.visibility = "hidden";
+			document.getElementById("divDownload").style.visibility = "visible";
 			
 			//const screenshotButton = document.getElementById('divSavePhoto');
 			const img = document.getElementById('screenShootImageInCanvas');
@@ -190,19 +361,19 @@
 			const video = document.getElementById('videoElement');
 			const canvas = document.getElementById('canvasScreenShoot');
 			
-			/*canvas.width = 750;
-			canvas.height = 562;*/
+			//canvas.width = 750;
+			//canvas.height = 562;
 			canvas.style.transform = "scaleX(-1)";
 			canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
 			
 			img.src = canvas.toDataURL('image/webp');
-            
-            
 		}
         
         function cancelScreenShootImageFunction() {
             document.getElementById('divScreenShot').style.visibility = "hidden";
             document.getElementById("divTakePhoto").style.visibility = "visible";
+			document.getElementById("switchContainer").style.visibility = "visible";
+			document.getElementById("divDownload").style.visibility = "hidden";
             //document.getElementById('switchContainer').style.visibility = "visible";
         }
 	
