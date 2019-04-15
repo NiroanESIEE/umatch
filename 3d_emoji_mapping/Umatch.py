@@ -84,7 +84,7 @@ def replace_face(image, emoji, x, y, w, h):
 
 if __name__ == "__main__":
     landmark_predictor = "shape_predictor_68_face_landmarks.dat"
-    image_path = "C.jpg"
+    image_path = "example_03.jpg"
     folder = 'output'
 
     # Initialize face detector and facial landmark predictor
@@ -111,7 +111,7 @@ if __name__ == "__main__":
         angleZ = rotation_head_z(shape)
 
         # Get 3D Emoji
-        emoji = EmojiModifier.EmojiModifier("umatchii", 0, 0, [0, angleY, angleZ])
+        emoji = EmojiModifier.EmojiModifier("umachicken_v1", 0, 0, [0, angleY, angleZ])
         emoji.image.save("popo.png", 'png')
 
         # Place Emoji

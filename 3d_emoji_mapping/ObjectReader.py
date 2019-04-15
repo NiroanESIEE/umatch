@@ -8,33 +8,12 @@ class ObjectReader(object):
         self.faces = []
         self.colors = []
         self.vertex_normals = []
-        self.face_vertex_normals = {}
+        # self.face_vertex_normals = {}
         self.face_normals = []
         self.materials_faces = {}
         self.materials = {}
         self.vts = []
 
-        self.read_obj_file(self, file_name_obj)
-
-    def read_obj_file(self, file_name_obj):
-        try:
-            obj_file = open(file_name_obj)
-
-
-
-        except IOError:
-            print(".obj file not found.")
-
-    def test(self, file_name_obj, file_name_mtl):
-        self.vertices = []
-        self.faces = []
-        self.colors = []
-        self.vertex_normals = []
-        self.face_vertex_normals = {}
-        self.face_normals = []
-        self.materials_faces = {}
-        self.materials = {}
-        self.vts = []
 
         try:
             fileOBJ = open(file_name_obj)
@@ -60,7 +39,7 @@ class ObjectReader(object):
                     face = []
                     vt = []
                     # vn = []
-                    i = string.find(" ") + 1
+                    # i = string.find(" ") + 1
                     faceLine = string.split(" ")
 
                     for f in range(1, len(faceLine)):
@@ -68,21 +47,23 @@ class ObjectReader(object):
                         face.append(int(faceSplit[0]) - 1)
                         vt.append(int(faceSplit[1]) - 1)
                         # vn.append(int(faceSplit[2]) - 1)
-                        self.face_vertex_normals[int(faceSplit[0]) - 1] = int(faceSplit[2]) - 1
+                        # self.face_vertex_normals[int(faceSplit[0]) - 1] = int(faceSplit[2]) - 1
 
                     self.faces.append(tuple(face))
                     lenFaces += 1
                     self.vts.append(tuple(vt))
 
                     self.materials_faces[key].append(lenFaces - 1)
+                """
                 elif line[:3] == "vn ":
                     index1 = line.find(" ") + 1
                     index2 = line.find(" ", index1 + 1)
                     index3 = line.find(" ", index2 + 1)
 
-                    vn = (float(line[index1:index2]), float(line[index2:index3]), float(line[index3:-1]))
-                    vn = (round(vn[0], 3), round(vn[1], 3), round(vn[2], 3))
+                    vn = [round(float(line[index1:index2]), 3), round(float(line[index2:index3]), 3), round(float(line[index3:-1]), 3)]
+                    # vn = tuple(round(vn[0], 3), round(vn[1], 3), round(vn[2], 3))
                     self.vertex_normals.append(vn)
+                """
 
             fileOBJ.close()
             fileMTL = open(file_name_mtl)
@@ -104,13 +85,28 @@ class ObjectReader(object):
 
             # Face normals
             for face in self.faces:
-                vnsList = []
+
+                v1 = np.array(self.vertices[face[0]]) - np.array(self.vertices[face[1]])
+                v2 = np.array(self.vertices[face[2]]) - np.array(self.vertices[face[1]])
+                n = np.array(np.cross(v1, v2))
+                if np.linalg.norm(n) != 0:
+                    n = n / np.linalg.norm(n)
+                self.face_normals.append(n)
+
+                """
+                # vnsList = []
+                n = np.array([0.0, 0.0, 0.0])
 
                 for vertex in face:
-                    vnsList.append(self.vertex_normals[self.face_vertex_normals[vertex]])
-                vnsList = np.array(vnsList)
-
-                self.face_normals.append(np.linalg.norm(np.mean(vnsList)))
+                    # vnsList.append(np.array(self.vertex_normals[self.face_vertex_normals[vertex]]))
+                    n = n + np.array(self.vertex_normals[self.face_vertex_normals[vertex]])
+                # vnsList = np.array(vnsList)
+                # norm = np.mean(vnsList)
+                # norm = norm / 3
+                if np.linalg.norm(n) != 0:
+                    n = n / np.linalg.norm(n)
+                self.face_normals.append(n)
+                """
 
 
         except IOError:
