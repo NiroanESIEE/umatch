@@ -54,16 +54,13 @@ class ObjectReader(object):
                     self.vts.append(tuple(vt))
 
                     self.materials_faces[key].append(lenFaces - 1)
-                """
                 elif line[:3] == "vn ":
                     index1 = line.find(" ") + 1
                     index2 = line.find(" ", index1 + 1)
                     index3 = line.find(" ", index2 + 1)
 
                     vn = [round(float(line[index1:index2]), 3), round(float(line[index2:index3]), 3), round(float(line[index3:-1]), 3)]
-                    # vn = tuple(round(vn[0], 3), round(vn[1], 3), round(vn[2], 3))
                     self.vertex_normals.append(vn)
-                """
 
             fileOBJ.close()
             fileMTL = open(file_name_mtl)

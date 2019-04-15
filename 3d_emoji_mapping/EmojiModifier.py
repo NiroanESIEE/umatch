@@ -18,13 +18,6 @@ class EmojiModifier(object):
 
         display = (500, 500)
         object_pos = np.array([0.0, 0.0, -18])
-        """
-        light_pos = np.array([10, 3, -15])
-        angle = 0
-
-        new_light_pos = light_pos - object_pos
-        new_light_pos = np.linalg.norm(new_light_pos)
-        """
 
         light_pos = np.array([5, -5, -16])
 
@@ -35,10 +28,6 @@ class EmojiModifier(object):
         pygame.display.set_caption("Nez ro anne")
 
         self.init_open_gl(display, object_pos, rotations)
-        """
-        glRotatef(rotations[1], 0, 1, 0)
-        glRotatef(rotations[2], 0, 0, 1)
-        """
 
         self.refresh_open_gl()
 
@@ -88,11 +77,6 @@ class EmojiModifier(object):
             color = np.array(emoji.materials[material]['Kd'])
             intensity = 1
             for face in faces:
-                """
-                normal = emoji.face_normals[face]
-                output_color = (intensity * color * np.dot(normal, new_light_pos)) / 255
-                output_color = color
-                """
 
                 normal = emoji.face_normals[face]
                 direction = max(np.dot(normal, new_light_pos), 0)
