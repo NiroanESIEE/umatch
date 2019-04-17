@@ -118,7 +118,7 @@ Extra (xl) large devices (large desktops, 1200px and up)
 
 #uploadContainer {
 	position:relative;
-	top:-31em;
+	top:-34em;
 	visibility:hidden;
 	background-color:blue;
 	/*height:60vh;*/
@@ -135,9 +135,10 @@ Extra (xl) large devices (large desktops, 1200px and up)
 
 #divDisplayListImage {
 	position:absolute;
-	background-color:red;
+	background-color:#757575;
 	min-height:470px;
 	width:20%;
+	back
 }
 
 #choice {
@@ -383,6 +384,12 @@ input[type="radio"] {
 	height: 100%;
 }
 
+#selectImag1, #selectImag2, #selectImag3, #selectImag4 {
+	height:100px;
+	margin:14px;
+	background-color: white;
+}
+
 .navbar {
     padding: 0;
 }
@@ -527,6 +534,8 @@ p {
   border-color: #FFD500;
   cursor: pointer;
 }
+
+
 
 
 
