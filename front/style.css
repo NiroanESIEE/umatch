@@ -106,19 +106,45 @@ Extra (xl) large devices (large desktops, 1200px and up)
 	visibility:visible;
 }
 
-#videoElement {
+/*#videoElement {
 	position:relative;
 	background-color: #757575;
 	visibility:visible;
 	-webkit-transform: scaleX(-1);
 	transform: scaleX(-1);
-    object-fit: cover;
-    min-height: 470px;
+    //object-fit: cover;
+    min-height: 710px;
+}
+
+#divVideo {
+	object-fit: cover;
+}*/
+
+#videoElement {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	visibility:visible;
+	-webkit-transform: scaleX(-1);
+	transform: scaleX(-1);
+}
+
+#divVideo {
+	position: relative;
+	min-height: 710px;
+	overflow: hidden;
+}
+
+#divVideo #videoElement {
+	object-fit: cover;
+	background: #757575;
 }
 
 #uploadContainer {
-	position:relative;
-	top:-34em;
+	/*position:relative;*/
+	top:-36em;
 	visibility:hidden;
 	background-color:blue;
 	/*height:60vh;*/
@@ -138,7 +164,7 @@ Extra (xl) large devices (large desktops, 1200px and up)
 	background-color:#757575;
 	min-height:470px;
 	width:20%;
-	back
+	/*back*/
 }
 
 #choice {
@@ -354,7 +380,7 @@ input[type="radio"] {
 	position:absolute;
 	top:0;
 	text-align:center;
-	height:92%;
+	height:93%;
 	
 	object-fit: cover;
     min-height: 470px;
