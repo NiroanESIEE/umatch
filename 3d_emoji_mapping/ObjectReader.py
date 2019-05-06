@@ -4,6 +4,7 @@ import numpy as np
 class ObjectReader(object):
 
     def __init__(self, file_name_obj, file_name_mtl):
+        self.original_vertices = []
         self.vertices = []
         self.faces = []
         self.colors = []
@@ -13,6 +14,22 @@ class ObjectReader(object):
         self.materials_faces = {}
         self.materials = {}
         self.vts = []
+        
+        self.mouth_up = []
+        self.mouth_down = []
+        
+        self.left_eye = []
+        self.right_eye = []
+        
+        self.y_min_left = 10000
+        self.y_max_left = -10000
+        self.x_min_left = 10000
+        self.x_max_left = -10000
+        
+        self.y_min_right = 10000
+        self.y_max_right = -10000
+        self.x_min_right = 10000
+        self.x_max_right = -10000
 
 
         try:
@@ -28,6 +45,7 @@ class ObjectReader(object):
 
                     vertex = (float(line[index1:index2]), float(line[index2:index3]), float(line[index3:-1]))
                     vertex = (round(vertex[0], 2), round(vertex[1], 2), round(vertex[2], 2))
+                    self.original_vertices.append(vertex)
                     self.vertices.append(vertex)
                 elif line[:6] == "usemtl":
                     i = line.find(" ") + 1
@@ -104,7 +122,90 @@ class ObjectReader(object):
                     n = n / np.linalg.norm(n)
                 self.face_normals.append(n)
                 """
-
+            
+            #self.get_mouth_vertices()
+            self.get_eyes()
 
         except IOError:
             print(".obj file not found.")
+    
+    
+    def get_mouth_vertices(self):
+        
+        for face in self.materials_faces["BeakUpSG"]:
+            for vertex in self.faces[face]:
+                #self.mouth_up.append(self.vertices[vertex])
+                self.mouth_up.append(vertex)
+        self.mouth_up = sorted(self.mouth_up, key=lambda x: x[0])
+        
+        for face in self.materials_faces["BeakDownSG"]:
+            for vertex in self.faces[face]:
+                #self.mouth_down.append(self.vertices[vertex])
+                self.mouth_down.append(vertex)
+        self.mouth_down = sorted(self.mouth_down, key=lambda x: x[0])
+        
+        
+    def get_eyes(self):
+        
+        for face in self.materials_faces["LeftEyeColorSG"]:
+            for vertex in self.faces[face]:
+                
+                v = self.vertices[vertex]
+                if self.y_min_left > v[1]:
+                    self.y_min_left = v[1]
+                if self.y_max_left < v[1]:
+                    self.y_max_left = v[1]
+                
+                if self.x_min_left > v[0]:
+                    self.x_min_left = v[0]
+                if self.x_max_left < v[0]:
+                    self.x_max_left = v[0]
+                    
+                #self.left_eye.append(v)
+                self.left_eye.append(vertex)
+        
+        
+        self.y_min_left += ((self.y_max_left - self.y_min_left)/2)
+        
+        i = 0
+        while i < len(self.left_eye):
+            if self.vertices[self.left_eye[i]][1] < self.y_min_left:
+                #if self.left_eye[i] < self.y_min_left:
+                self.left_eye.pop(i)
+                continue
+            i += 1
+        
+        for face in self.materials_faces["RightEyeColorSG"]:
+            for vertex in self.faces[face]:
+                v = self.vertices[vertex]
+                
+                if self.y_min_right > v[1]:
+                    self.y_min_right = v[1]
+                if self.y_max_right < v[1]:
+                    self.y_max_right = v[1]
+                    
+                if self.x_min_right > v[0]:
+                    self.x_min_right = v[0]
+                if self.x_max_right < v[0]:
+                    self.x_max_right = v[0]
+                
+                #self.right_eye.append(v)
+                self.right_eye.append(vertex)
+        
+        self.y_min_right += ((self.y_max_right - self.y_min_right)/2)
+        
+        i = 0 
+        while i < len(self.right_eye):
+            if self.vertices[self.right_eye[i]][1] < self.y_min_right:
+                #if self.right_eye[i] < self.y_min_right:
+                self.right_eye.pop(i)
+                continue
+            i += 1
+        
+        
+        
+        
+        
+        
+        
+        

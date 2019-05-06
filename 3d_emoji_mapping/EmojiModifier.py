@@ -19,9 +19,18 @@ class EmojiModifier(object):
         display = (500, 500)
         object_pos = np.array([0.0, 0.0, -18])
 
-        light_pos = np.array([5, -5, -16])
+        light_pos = np.array([5, -5, -15])
+        light_pos_2 = np.array([0, 0, -15])
+        light_pos_3 = np.array([0, 5, -15])
+        light_pos_4 = np.array([-5, 5, -15])
+        
+        lights = []
+        lights.append(light_pos)
+        #lights.append(light_pos_2)
+        #lights.append(light_pos_3)
+        lights.append(light_pos_4)
 
-        new_light_pos = self.set_lighting(light_pos, object_pos, rotations)
+        new_light_pos = self.set_lighting(lights, object_pos, rotations)
 
         pygame.init()
         pygame.display.set_mode(display, pygame.DOUBLEBUF | pygame.OPENGL, 32)
@@ -30,7 +39,11 @@ class EmojiModifier(object):
         self.init_open_gl(display, object_pos, rotations)
 
         self.refresh_open_gl()
-
+        
+        #self.open_mouth(emoji, 1)
+        #self.set_angry(emoji)
+        #self.set_sad(emoji)
+        
         self.draw_object(emoji, new_light_pos)
 
         pygame.display.flip()
@@ -38,24 +51,29 @@ class EmojiModifier(object):
         pygame.quit()
         # quit()
 
-    def set_lighting(self, light_pos, object_pos, rotation):
-        new_light_pos = light_pos - object_pos
-
-        # Rotation Y
-        if rotation[1] != 0:
-            angleY = rotation[1] * pi / 180
-            new_light_pos[0] = light_pos[0] * cos(angleY) - light_pos[2] * sin(angleY)
-            new_light_pos[2] = light_pos[0] * sin(angleY) + light_pos[2] * cos(angleY)
-
-        # Rotation Z
-        if rotation[2] != 0:
-            angleZ = rotation[2] * pi / 180
-            new_light_pos[0] = light_pos[0] * cos(angleZ) - light_pos[1] * sin(angleZ)
-            new_light_pos[1] = light_pos[0] * sin(angleZ) + light_pos[1] * cos(angleZ)
-
-        if np.linalg.norm(new_light_pos) != 0:
-            new_light_pos = new_light_pos / np.linalg.norm(new_light_pos)
-        return new_light_pos
+    def set_lighting(self, lights, object_pos, rotation):
+        l = []
+        
+        for light_pos in lights:
+            new_light_pos = light_pos - object_pos
+    
+            # Rotation Y
+            if rotation[1] != 0:
+                angleY = rotation[1] * pi / 180
+                new_light_pos[0] = light_pos[0] * cos(angleY) - light_pos[2] * sin(angleY)
+                new_light_pos[2] = light_pos[0] * sin(angleY) + light_pos[2] * cos(angleY)
+    
+            # Rotation Z
+            if rotation[2] != 0:
+                angleZ = rotation[2] * pi / 180
+                new_light_pos[0] = light_pos[0] * cos(angleZ) - light_pos[1] * sin(angleZ)
+                new_light_pos[1] = light_pos[0] * sin(angleZ) + light_pos[1] * cos(angleZ)
+    
+            if np.linalg.norm(new_light_pos) != 0:
+                new_light_pos = new_light_pos / np.linalg.norm(new_light_pos)
+            
+            l.append(new_light_pos)
+        return l
 
     def init_open_gl(self, display, object_pos, rotations):
         gluPerspective(45, (display[0] / display[1]), 0.1, 50.0)
@@ -71,18 +89,28 @@ class EmojiModifier(object):
         glClearDepth(1.0)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
-    def draw_object(self, emoji, new_light_pos):
+    def draw_object(self, emoji, lights):
         glBegin(GL_TRIANGLES)
         for material, faces in emoji.materials_faces.items():
             color = np.array(emoji.materials[material]['Kd'])
             intensity = 1
             for face in faces:
-
+                
                 normal = emoji.face_normals[face]
-                direction = max(np.dot(normal, new_light_pos), 0)
-                output_color = (intensity * color * direction)
-
+                output_color = (0, 0, 0)
+                
+                for light in lights:
+                    direction = max(np.dot(normal, light), 0)
+                    output_color = (output_color[0] + (intensity * color * direction)[0], output_color[1] + (intensity * color * direction)[1], output_color[2] + (intensity * color * direction)[2])
+                
+                """
+                if output_color == (0, 0, 0):
+                    print(normal)
+                    output_color = (0, 1, 0)
+                """
                 glColor3fv(output_color)
+                
+                #glColor3fv(color)
                 for vertex in emoji.faces[face]:
                     glVertex3fv(emoji.vertices[vertex])
         glEnd()
@@ -94,3 +122,62 @@ class EmojiModifier(object):
         image = Image.frombytes("RGBA", display, data)
         image = image.transpose(Image.FLIP_TOP_BOTTOM)
         return image
+    
+    
+    def open_mouth(self, emoji, open_y):
+        for vertex in emoji.mouth_up:
+            emoji.vertices[vertex] = (emoji.vertices[vertex][0], emoji.vertices[vertex][1] + open_y, emoji.vertices[vertex][2])
+        for vertex in emoji.mouth_down:
+            emoji.vertices[vertex] = (emoji.vertices[vertex][0], emoji.vertices[vertex][1] - open_y, emoji.vertices[vertex][2])
+    
+    def get_affine_image(self, a, b, x):
+        return (a * x + b)
+    
+    def set_angry(self, emoji):
+        self.set_angry_eye_left(emoji)
+        self.set_angry_eye_right(emoji)
+    
+    def set_angry_eye_left(self, emoji):
+        p1 = (emoji.x_min_left, emoji.y_max_left)
+        p2 = (emoji.x_max_left, emoji.y_min_left)
+        a = (p2[1] - p1[1]) / (p2[0] - p1[0])
+        b = p1[1] - a * p1[0]
+        for i in range(len(emoji.left_eye)):
+            v = emoji.vertices[emoji.left_eye[i]]
+            emoji.vertices[emoji.left_eye[i]] = (v[0], self.get_affine_image(a, b, v[0]), v[2])
+    
+    def set_angry_eye_right(self, emoji):
+        p1 = (emoji.x_min_right, emoji.y_min_right)
+        p2 = (emoji.x_max_right, emoji.y_max_right)
+        a = (p2[1] - p1[1]) / (p2[0] - p1[0])
+        b = p1[1] - a * p1[0]
+        for i in range(len(emoji.right_eye)):
+            v = emoji.vertices[emoji.right_eye[i]]
+            emoji.vertices[emoji.right_eye[i]] = (v[0], self.get_affine_image(a, b, v[0]), v[2])
+    
+    def set_sad(self, emoji):
+        self.set_sad_eye_left(emoji)
+        self.set_sad_eye_right(emoji)
+    
+    
+    def set_sad_eye_left(self, emoji):
+        p1 = (emoji.x_min_left, emoji.y_min_left * 1.2)
+        p2 = (emoji.x_max_left, emoji.y_max_left * 0.9)
+        a = (p2[1] - p1[1]) / (p2[0] - p1[0])
+        b = p1[1] - a * p1[0]
+        for i in range(len(emoji.left_eye)):
+            v = emoji.vertices[emoji.left_eye[i]]
+            emoji.vertices[emoji.left_eye[i]] = (v[0], self.get_affine_image(a, b, v[0]), v[2])
+    
+    def set_sad_eye_right(self, emoji):
+        p1 = (emoji.x_min_right, emoji.y_max_right * 0.9)
+        p2 = (emoji.x_max_right, emoji.y_min_right * 1.2)
+        a = (p2[1] - p1[1]) / (p2[0] - p1[0])
+        b = p1[1] - a * p1[0]
+        for i in range(len(emoji.right_eye)):
+            v = emoji.vertices[emoji.right_eye[i]]
+            emoji.vertices[emoji.right_eye[i]] = (v[0], self.get_affine_image(a, b, v[0]), v[2])
+    
+    
+        
+        

@@ -111,7 +111,7 @@ if __name__ == "__main__":
         angleZ = rotation_head_z(shape)
 
         # Get 3D Emoji
-        emoji = EmojiModifier.EmojiModifier("umachicken_v1", 0, 0, [0, angleY, angleZ])
+        emoji = EmojiModifier.EmojiModifier("Umatchicken_CombinedTriangulated", 0, 0, [0, angleY, angleZ])
         emoji.image.save("popo.png", 'png')
 
         # Place Emoji
