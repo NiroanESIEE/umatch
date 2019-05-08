@@ -20,9 +20,16 @@ def face_detection(rects, loadmod, image):
     """
     """
     for (i, rect) in enumerate(rects):
+        print(i)
+        print(type(rect))
+        #cv2.rectangle(image, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (0, 255, 0), 2)
+        
         #Recupere les points du visages et les stock dans une liste
         shape = predictor(gray, rect)
         shape = face_utils.shape_to_np(shape)
+        
+        for (x, y) in shape:
+            cv2.circle(image, (x, y), 1, (0, 0, 255), -1)
         
         features = []
         features.append(dist_between_eyebrow(shape))
@@ -213,8 +220,8 @@ if __name__ == "__main__":
 
     start = time.time()
     # load the input image, resize it, and convert it to grayscale
-    image = cv2.imread("images/example_03.jpg")
-    image = imutils.resize(image, width=500)
+    image = cv2.imread("images/Major.jpg")
+    #image = imutils.resize(image, width=500)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     
     # detect faces in the grayscale image

@@ -138,6 +138,14 @@ def dist_mouth_corner(shape):
     return dist
 
 
+def dist_mouth_vertical(shape, rect):
+    den = abs(rect.tl_corner().y - rect.br_corner().y)
+    if den == 0:
+        den = 0.1
+    dist = dist_points(shape[51], shape[57]) / den
+    return dist
+
+
 # initialize dlib's face detector (HOG-based) and then create
 # the facial landmark predictor
 print("[INFO] loading facial landmark predictor...")
@@ -169,6 +177,7 @@ while True:
     start = time.time()
     # loop over the face detections
     for rect in rects:
+        
         # determine the facial landmarks for the face region, then
         # convert the facial landmark (x, y)-coordinates to a NumPy
         # array
@@ -198,7 +207,9 @@ while True:
         # Prediction
         emotion = loadmod.predict([features])
         print(emotion)
-
+        
+        print(dist_mouth_vertical(shape, rect))
+        
     # show the frame
     end = time.time()
     cv2.imshow("Frame", frame)

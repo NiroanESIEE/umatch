@@ -30,6 +30,16 @@ class ObjectReader(object):
         self.y_max_right = -10000
         self.x_min_right = 10000
         self.x_max_right = -10000
+        
+        self.z_min_mouth_up = 10000
+        self.z_max_mouth_up = -10000
+        self.y_min_mouth_up = 10000
+        self.y_max_mouth_up = -10000
+        
+        self.z_min_mouth_down = 10000
+        self.z_max_mouth_down = -10000
+        self.y_min_mouth_down = 10000
+        self.y_max_mouth_down = -10000
 
 
         try:
@@ -123,7 +133,7 @@ class ObjectReader(object):
                 self.face_normals.append(n)
                 """
             
-            #self.get_mouth_vertices()
+            self.get_mouth_vertices()
             self.get_eyes()
 
         except IOError:
@@ -136,13 +146,39 @@ class ObjectReader(object):
             for vertex in self.faces[face]:
                 #self.mouth_up.append(self.vertices[vertex])
                 self.mouth_up.append(vertex)
-        self.mouth_up = sorted(self.mouth_up, key=lambda x: x[0])
+                
+                v = self.vertices[vertex]
+                if self.z_min_mouth_up > v[2]:
+                    self.z_min_mouth_up = v[2]
+                if self.z_max_mouth_up < v[2]:
+                    self.z_max_mouth_up = v[2]
+                    
+                if self.y_min_mouth_up > v[1]:
+                    self.y_min_mouth_up = v[1]
+                if self.y_max_mouth_up < v[1]:
+                    self.y_max_mouth_up = v[1]
+        
+        #self.mouth_up = sorted(self.mouth_up, key=lambda x: x[0])
+        self.mouth_up = set(self.mouth_up)
         
         for face in self.materials_faces["BeakDownSG"]:
             for vertex in self.faces[face]:
                 #self.mouth_down.append(self.vertices[vertex])
                 self.mouth_down.append(vertex)
-        self.mouth_down = sorted(self.mouth_down, key=lambda x: x[0])
+                
+                v = self.vertices[vertex]
+                if self.z_min_mouth_down > v[2]:
+                    self.z_min_mouth_down = v[2]
+                if self.z_max_mouth_down < v[2]:
+                    self.z_max_mouth_down = v[2]
+                    
+                if self.y_min_mouth_down > v[1]:
+                    self.y_min_mouth_down = v[1]
+                if self.y_max_mouth_down < v[1]:
+                    self.y_max_mouth_down = v[1]
+        
+        #self.mouth_down = sorted(self.mouth_down, key=lambda x: x[0])
+        self.mouth_down = set(self.mouth_down)
         
         
     def get_eyes(self):

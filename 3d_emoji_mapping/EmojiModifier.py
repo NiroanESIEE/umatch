@@ -13,6 +13,8 @@ class EmojiModifier(object):
     def __init__(self, filename, mouth, eyes, rotations):
 
         self.image = 0
+        self.min_mouth_y = 0.12
+        self.max_mouth_y = 0.30
 
         emoji = ObjectReader.ObjectReader("3d_object/" + filename + ".obj", "3d_object/" + filename + ".mtl")
 
@@ -39,6 +41,8 @@ class EmojiModifier(object):
         self.init_open_gl(display, object_pos, rotations)
 
         self.refresh_open_gl()
+        
+        self.open_mouth_y(filename, emoji, mouth[1])
         
         #self.open_mouth(emoji, 1)
         #self.set_angry(emoji)
@@ -79,6 +83,7 @@ class EmojiModifier(object):
         gluPerspective(45, (display[0] / display[1]), 0.1, 50.0)
         glTranslatef(object_pos[0], object_pos[1], object_pos[2])
 
+        glRotate(rotations[0], 1, 0, 0)
         glRotate(rotations[1], 0, 1, 0)
         glRotate(rotations[2], 0, 0, 1)
 
@@ -103,11 +108,6 @@ class EmojiModifier(object):
                     direction = max(np.dot(normal, light), 0)
                     output_color = (output_color[0] + (intensity * color * direction)[0], output_color[1] + (intensity * color * direction)[1], output_color[2] + (intensity * color * direction)[2])
                 
-                """
-                if output_color == (0, 0, 0):
-                    print(normal)
-                    output_color = (0, 1, 0)
-                """
                 glColor3fv(output_color)
                 
                 #glColor3fv(color)
@@ -123,15 +123,23 @@ class EmojiModifier(object):
         image = image.transpose(Image.FLIP_TOP_BOTTOM)
         return image
     
-    
+    """
     def open_mouth(self, emoji, open_y):
         for vertex in emoji.mouth_up:
             emoji.vertices[vertex] = (emoji.vertices[vertex][0], emoji.vertices[vertex][1] + open_y, emoji.vertices[vertex][2])
         for vertex in emoji.mouth_down:
             emoji.vertices[vertex] = (emoji.vertices[vertex][0], emoji.vertices[vertex][1] - open_y, emoji.vertices[vertex][2])
+    """
     
     def get_affine_image(self, a, b, x):
         return (a * x + b)
+    
+    def open_mouth_y(self, filename, emoji, mouth_y):
+        max_down = abs(mouth_y - self.min_mouth_y) * abs(emoji.y_max_mouth_down - emoji.y_min_mouth_down) / abs(self.max_mouth_y - self.min_mouth_y)
+        for vertex in emoji.mouth_down:
+            v = emoji.vertices[vertex]
+            down = abs(v[2] - emoji.z_min_mouth_down) / abs(emoji.z_max_mouth_down - emoji.z_min_mouth_down)
+            emoji.vertices[vertex] = (v[0], v[1] - max_down * down, v[2])
     
     def set_angry(self, emoji):
         self.set_angry_eye_left(emoji)
