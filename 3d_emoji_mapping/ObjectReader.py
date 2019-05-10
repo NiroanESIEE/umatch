@@ -15,11 +15,15 @@ class ObjectReader(object):
         self.materials = {}
         self.vts = []
         
+        self.left_eye = []
+        self.right_eye = []
+        
         self.mouth_up = []
         self.mouth_down = []
         
-        self.left_eye = []
-        self.right_eye = []
+        self.mouth_left = []
+        self.mouth_right = []
+        
         
         self.y_min_left = 10000
         self.y_max_left = -10000
@@ -30,7 +34,22 @@ class ObjectReader(object):
         self.y_max_right = -10000
         self.x_min_right = 10000
         self.x_max_right = -10000
-
+        
+        self.z_min_mouth_up = 10000
+        self.z_max_mouth_up = -10000
+        self.y_min_mouth_up = 10000
+        self.y_max_mouth_up = -10000
+        
+        self.z_min_mouth_down = 10000
+        self.z_max_mouth_down = -10000
+        self.y_min_mouth_down = 10000
+        self.y_max_mouth_down = -10000
+        
+        self.x_moy_mouth = 0
+        self.x_min_mouth = 10000
+        self.x_max_mouth = -10000
+        
+        self.eps = 0.05
 
         try:
             fileOBJ = open(file_name_obj)
@@ -123,7 +142,7 @@ class ObjectReader(object):
                 self.face_normals.append(n)
                 """
             
-            #self.get_mouth_vertices()
+            self.get_mouth_vertices()
             self.get_eyes()
 
         except IOError:
@@ -136,14 +155,63 @@ class ObjectReader(object):
             for vertex in self.faces[face]:
                 #self.mouth_up.append(self.vertices[vertex])
                 self.mouth_up.append(vertex)
-        self.mouth_up = sorted(self.mouth_up, key=lambda x: x[0])
+                
+                v = self.vertices[vertex]
+                if self.z_min_mouth_up > v[2]:
+                    self.z_min_mouth_up = v[2]
+                if self.z_max_mouth_up < v[2]:
+                    self.z_max_mouth_up = v[2]
+                    
+                if self.y_min_mouth_up > v[1]:
+                    self.y_min_mouth_up = v[1]
+                if self.y_max_mouth_up < v[1]:
+                    self.y_max_mouth_up = v[1]
+                
+                if self.x_min_mouth > v[0]:
+                    self.x_min_mouth = v[0]
+                if self.x_max_mouth < v[0]:
+                    self.x_max_mouth = v[0]
+        
+        #self.mouth_up = sorted(self.mouth_up, key=lambda x: x[0])
+        self.mouth_up = set(self.mouth_up)
+        
+        self.x_moy_mouth = (self.x_min_mouth + self.x_max_mouth) / 2
+        
+        for face in self.materials_faces["BeakUpSG"]:
+            for vertex in self.faces[face]:
+                v = self.vertices[vertex]
+                if (v[0] < (self.x_moy_mouth - self.eps)):
+                    self.mouth_left.append(vertex)
+                elif (v[0] > (self.x_moy_mouth + self.eps)):
+                    self.mouth_right.append(vertex)
+        
         
         for face in self.materials_faces["BeakDownSG"]:
             for vertex in self.faces[face]:
                 #self.mouth_down.append(self.vertices[vertex])
                 self.mouth_down.append(vertex)
-        self.mouth_down = sorted(self.mouth_down, key=lambda x: x[0])
+                
+                v = self.vertices[vertex]
+                if self.z_min_mouth_down > v[2]:
+                    self.z_min_mouth_down = v[2]
+                if self.z_max_mouth_down < v[2]:
+                    self.z_max_mouth_down = v[2]
+                    
+                if self.y_min_mouth_down > v[1]:
+                    self.y_min_mouth_down = v[1]
+                if self.y_max_mouth_down < v[1]:
+                    self.y_max_mouth_down = v[1]
+                
+                if (v[0] < (self.x_moy_mouth - self.eps)):
+                    self.mouth_left.append(vertex)
+                elif (v[0] > (self.x_moy_mouth + self.eps)):
+                    self.mouth_right.append(vertex)
         
+        #self.mouth_down = sorted(self.mouth_down, key=lambda x: x[0])
+        self.mouth_down = set(self.mouth_down)
+        
+        self.mouth_left = set(self.mouth_left)
+        self.mouth_right = set(self.mouth_right)
         
     def get_eyes(self):
         

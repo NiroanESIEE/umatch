@@ -45,14 +45,15 @@ def face_detection(rects, loadmod, image):
         emotion = loadmod.predict([features])
         print(emotion)
         #emoji = cv2.imread("emojis/" + emotion[0] + ".png")
-        #emoji = cv2.imread("emojis/test.png")
+        emoji = cv2.imread("emojis/popo.png")
         
-        #taille = abs(shape[9][1] - shape[20][1]) * 2
+        taille = abs(shape[9][1] - shape[20][1]) * 2
         
-        #posX = shape[28][0] - abs(shape[9][1] - shape[20][1])
-        #posY = shape[28][1] - abs(shape[9][1] - shape[20][1])
+        posX = shape[28][0] - abs(shape[9][1] - shape[20][1])
+        posY = shape[28][1] - abs(shape[9][1] - shape[20][1])
         
-        #place_emoji(image, emoji, posX, posY, taille)
+        
+        place_emoji(image, emoji, posX, posY, taille)
 
 def dist_points(p1, p2):
     dist = sqrt(pow(p1[0] - p2[0], 2) + pow(p1[1] - p2[1], 2))
@@ -189,6 +190,11 @@ def place_emoji(image, emoji, posX, posY, taille):
     tmp2image = cv2.resize(tmp2image, (taille, taille))
     rows, cols, channels = tmp2image.shape
     
+    print(posX)
+    print(posY)
+    print(rows)
+    print(cols)
+    
     ROI = image[posY:rows + posY, posX:cols + posX]
     
     img2gray = cv2.cvtColor(tmp2image, cv2.COLOR_RGB2GRAY)
@@ -213,7 +219,7 @@ if __name__ == "__main__":
 
     start = time.time()
     # load the input image, resize it, and convert it to grayscale
-    image = cv2.imread("images/example_03.jpg")
+    image = cv2.imread("images/H.jpg")
     image = imutils.resize(image, width=500)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     
