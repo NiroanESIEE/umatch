@@ -142,76 +142,97 @@ class ObjectReader(object):
                 self.face_normals.append(n)
                 """
             
-            self.get_mouth_vertices()
-            self.get_eyes()
+            #self.get_mouth_vertices()
+            #self.get_eyes()
 
         except IOError:
             print(".obj file not found.")
     
     
     def get_mouth_vertices(self):
-        
-        for face in self.materials_faces["BeakUpSG"]:
-            for vertex in self.faces[face]:
-                #self.mouth_up.append(self.vertices[vertex])
-                self.mouth_up.append(vertex)
-                
-                v = self.vertices[vertex]
-                if self.z_min_mouth_up > v[2]:
-                    self.z_min_mouth_up = v[2]
-                if self.z_max_mouth_up < v[2]:
-                    self.z_max_mouth_up = v[2]
+        if "BeakUpSG" in self.materials_faces:
+            for face in self.materials_faces["BeakUpSG"]:
+                for vertex in self.faces[face]:
+                    #self.mouth_up.append(self.vertices[vertex])
+                    self.mouth_up.append(vertex)
                     
-                if self.y_min_mouth_up > v[1]:
-                    self.y_min_mouth_up = v[1]
-                if self.y_max_mouth_up < v[1]:
-                    self.y_max_mouth_up = v[1]
-                
-                if self.x_min_mouth > v[0]:
-                    self.x_min_mouth = v[0]
-                if self.x_max_mouth < v[0]:
-                    self.x_max_mouth = v[0]
-        
-        #self.mouth_up = sorted(self.mouth_up, key=lambda x: x[0])
-        self.mouth_up = set(self.mouth_up)
-        
-        self.x_moy_mouth = (self.x_min_mouth + self.x_max_mouth) / 2
-        
-        for face in self.materials_faces["BeakUpSG"]:
-            for vertex in self.faces[face]:
-                v = self.vertices[vertex]
-                if (v[0] < (self.x_moy_mouth - self.eps)):
-                    self.mouth_left.append(vertex)
-                elif (v[0] > (self.x_moy_mouth + self.eps)):
-                    self.mouth_right.append(vertex)
-        
-        
-        for face in self.materials_faces["BeakDownSG"]:
-            for vertex in self.faces[face]:
-                #self.mouth_down.append(self.vertices[vertex])
-                self.mouth_down.append(vertex)
-                
-                v = self.vertices[vertex]
-                if self.z_min_mouth_down > v[2]:
-                    self.z_min_mouth_down = v[2]
-                if self.z_max_mouth_down < v[2]:
-                    self.z_max_mouth_down = v[2]
+                    v = self.vertices[vertex]
+                    if self.z_min_mouth_up > v[2]:
+                        self.z_min_mouth_up = v[2]
+                    if self.z_max_mouth_up < v[2]:
+                        self.z_max_mouth_up = v[2]
+                        
+                    if self.y_min_mouth_up > v[1]:
+                        self.y_min_mouth_up = v[1]
+                    if self.y_max_mouth_up < v[1]:
+                        self.y_max_mouth_up = v[1]
                     
-                if self.y_min_mouth_down > v[1]:
-                    self.y_min_mouth_down = v[1]
-                if self.y_max_mouth_down < v[1]:
-                    self.y_max_mouth_down = v[1]
-                
-                if (v[0] < (self.x_moy_mouth - self.eps)):
-                    self.mouth_left.append(vertex)
-                elif (v[0] > (self.x_moy_mouth + self.eps)):
-                    self.mouth_right.append(vertex)
-        
-        #self.mouth_down = sorted(self.mouth_down, key=lambda x: x[0])
-        self.mouth_down = set(self.mouth_down)
-        
-        self.mouth_left = set(self.mouth_left)
-        self.mouth_right = set(self.mouth_right)
+                    if self.x_min_mouth > v[0]:
+                        self.x_min_mouth = v[0]
+                    if self.x_max_mouth < v[0]:
+                        self.x_max_mouth = v[0]
+            
+            #self.mouth_up = sorted(self.mouth_up, key=lambda x: x[0])
+            self.mouth_up = set(self.mouth_up)
+            
+            self.x_moy_mouth = (self.x_min_mouth + self.x_max_mouth) / 2
+            
+            for face in self.materials_faces["BeakUpSG"]:
+                for vertex in self.faces[face]:
+                    v = self.vertices[vertex]
+                    if (v[0] < (self.x_moy_mouth - self.eps)):
+                        self.mouth_left.append(vertex)
+                    elif (v[0] > (self.x_moy_mouth + self.eps)):
+                        self.mouth_right.append(vertex)
+            
+            
+            for face in self.materials_faces["BeakDownSG"]:
+                for vertex in self.faces[face]:
+                    #self.mouth_down.append(self.vertices[vertex])
+                    self.mouth_down.append(vertex)
+                    
+                    v = self.vertices[vertex]
+                    if self.z_min_mouth_down > v[2]:
+                        self.z_min_mouth_down = v[2]
+                    if self.z_max_mouth_down < v[2]:
+                        self.z_max_mouth_down = v[2]
+                        
+                    if self.y_min_mouth_down > v[1]:
+                        self.y_min_mouth_down = v[1]
+                    if self.y_max_mouth_down < v[1]:
+                        self.y_max_mouth_down = v[1]
+                    
+                    if (v[0] < (self.x_moy_mouth - self.eps)):
+                        self.mouth_left.append(vertex)
+                    elif (v[0] > (self.x_moy_mouth + self.eps)):
+                        self.mouth_right.append(vertex)
+            
+            #self.mouth_down = sorted(self.mouth_down, key=lambda x: x[0])
+            self.mouth_down = set(self.mouth_down)
+            
+            self.mouth_left = set(self.mouth_left)
+            self.mouth_right = set(self.mouth_right)
+        else:
+            for face in self.materials_faces["Mouth"]:
+                for vertex in self.faces[face]:
+                    #self.mouth_up.append(self.vertices[vertex])
+                    self.mouth_up.append(vertex)
+                    
+                    v = self.vertices[vertex]
+                    if self.z_min_mouth_up > v[2]:
+                        self.z_min_mouth_up = v[2]
+                    if self.z_max_mouth_up < v[2]:
+                        self.z_max_mouth_up = v[2]
+                        
+                    if self.y_min_mouth_up > v[1]:
+                        self.y_min_mouth_up = v[1]
+                    if self.y_max_mouth_up < v[1]:
+                        self.y_max_mouth_up = v[1]
+                    
+                    if self.x_min_mouth > v[0]:
+                        self.x_min_mouth = v[0]
+                    if self.x_max_mouth < v[0]:
+                        self.x_max_mouth = v[0]
         
     def get_eyes(self):
         

@@ -67,76 +67,16 @@ def dist_mouth_horizontal(shape, rect):
     dist = dist_points(shape[48], shape[54]) / den
     return dist
 
-
-"""
-def replace_face(image, emoji, x, y, w, h):
-    #im = Image.open(image, 'r')
-    #im = im.transpose(Image.FLIP_TOP_BOTTOM)
-    im = image
-    em = Image.open(emoji, 'r').resize((w, h))
-
-    height, width = im.shape[:2]
-
-    image_matrix = zeros((height, width, 3), dtype=uint8)
-
-    #im_list = list(im.getdata())
-    em_list = list(em.getdata())
-
-
-
-    for i in range(height):
-        for j in range(width):
-            if x <= j < x + w and y <= i < y + h:
-                color = em_list[(i - y) * w + (j - x)]
-                if color[3] != 0:
-                    image_matrix[i, j] = list(color[:3])
-                else:
-                    image_matrix[i, j] = list(im[i][j])
-            else:
-                image_matrix[i, j] = list(im[i][j])
-
-    new_image = Image.fromarray(image_matrix, 'RGB')
-    return new_image
-"""
-
-if __name__ == "__main__":
-    landmark_predictor = "shape_predictor_68_face_landmarks.dat"
-    image_path = "Major.jpg"
-    folder = 'output'
-
-    # Initialize face detector and facial landmark predictor
-    detector = dlib.get_frontal_face_detector()
-    predictor = dlib.shape_predictor(landmark_predictor)
-
-    # Load the input image, resize it, and convert it to grayscale
-    image = cv2.imread(image_path)
+def place_emoji(image_cv2, image_pil, detector, predictor):
+    
     #image = imutils.resize(image, width=800)
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    gray = cv2.cvtColor(image_cv2, cv2.COLOR_BGR2GRAY)
 
     # Detect faces
     rects = detector(gray, 1)
-    # clone = image.copy()
-    
-    face_size = (500, 500)
-    
 
     # Loop over the face detections
     for (i, rect) in enumerate(rects):
-        
-        """
-        face_list = []
-        for row in range(rect.tl_corner().y, rect.tr_corner().y + 1):
-            for col in range(rect.tl_corner().x, rect.tr_corner().x + 1):
-                face_list.append((image[row][col][0], image[row][col][1], image[row][col][2]))
-        
-        face_rect_size = (rect.br_corner().x - rect.tl_corner().x, rect.br_corner().y - rect.tl_corner().y)
-        face_image = Image.new("RGB", face_rect_size)
-        
-        face_image.putdata(face_list)
-        face_image.resize(face_size)
-        
-        open_cv_image = np.array(face_image)
-        """
         
         # Detect face points
         shape = predictor(gray, rect)
@@ -149,54 +89,63 @@ if __name__ == "__main__":
         mouthY = dist_mouth_vertical(shape, rect)
 
         # Get 3D Emoji
-        emoji = EmojiModifier.EmojiModifier("Umatchicken_CombinedTriangulated", [mouthX, mouthY], 0, [0, angleY, angleZ])
-        emoji.image.save("popo.png", 'png')
-
+        emoji = EmojiModifier.EmojiModifier("Umapion_Combined", [mouthX, mouthY], 0, [0, angleY, angleZ])
+        
         # Place Emoji
-        """w = int(((shape[8][1] - shape[20][1]) * 2) * 1.15)
-        h = w
-        x = int(shape[27][0] - w / 2)
-        y = int(shape[27][1] - h / 2)"""
         w = abs(shape[8][1] - shape[19][1]) * 2
         h = w
         x = shape[27][0] - abs(shape[8][1] - shape[19][1])
         y = shape[27][1] - abs(shape[8][1] - shape[19][1])
-
-        #image1 = replace_face(image, "popo.png", x, y, w, h)
-
-
-        tmp2image = cv2.imread("popo.png")
-        tmp2image = cv2.resize(tmp2image, (w, h))
-        rows, cols, channels = tmp2image.shape
-
-        # Main Image
-        ROI = image[y:rows + y, x:cols + x]
-
-        # Read Replacement Image
-        img2gray = cv2.cvtColor(tmp2image, cv2.COLOR_RGB2GRAY)
-
-        ret, mask = cv2.threshold(img2gray, 10, 255, cv2.THRESH_BINARY)
-        mask_inv = cv2.bitwise_not(mask)
-        img1_bg = cv2.bitwise_and(ROI, ROI, mask=mask_inv)
-        img2_fg = cv2.bitwise_and(tmp2image, tmp2image, mask=mask)
-
-        # Draw Rectangle for each faces
-        # cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
-        dst = cv2.add(img1_bg, img2_fg)
-
-        # image[y:rows + y, x:cols + x] = dst
-
-        dstY = 0
-        for i in range(y, rows + y):
-            dstX = 0
-            for j in range(x, cols + x):
-                image[i][j] = dst[dstY][dstX]
-                dstX += 1
-            dstY += 1
+        
+        xPos = int(x + (w / 2) - emoji.image.width/2)
+        yPos = int(y + (h / 2) - emoji.image.height/2)
+        
+        image_pil.paste(emoji.image, (xPos, yPos, emoji.image.width+xPos, emoji.image.height+yPos), emoji.image)
+        image_pil.save("imagePil.png", 'png')
+        
 
     if not os.path.exists(folder):
         os.mkdir(folder)
+    
+    return image_pil
+    
+    
+if __name__ == "__main__":
+    ap = argparse.ArgumentParser()
+    ap.add_argument("-p", "--picture",help="Image path")
+    ap.add_argument("-v","--video", help="Video path")
+    args = ap.parse_args()
+    landmark_predictor = "shape_predictor_68_face_landmarks.dat"
+    folder = 'output\\'
 
-    #image1.save(folder + "\output.png")
-
-    cv2.imwrite(folder + '\output.png', image)
+    # Initialize face detector and facial landmark predictor
+    detector = dlib.get_frontal_face_detector()
+    predictor = dlib.shape_predictor(landmark_predictor)
+    
+    # Image
+    if args.picture:
+        image_cv2 = cv2.imread(args.picture)
+        image_pil = Image.open(args.picture)
+        new_image = place_emoji(image_cv2, image_pil, detector, predictor)
+        new_image.save(folder + "output.png", 'png')
+    elif args.video:
+        
+        # Video
+        cap = cv2.VideoCapture(args.video)
+        
+        fourcc = cv2.VideoWriter_fourcc(*'XVID')
+        out = cv2.VideoWriter(folder + 'output.mp4', fourcc, cap.get(5), (int(cap.get(3)), int(cap.get(4))))
+        
+        while(cap.isOpened()):
+            ret, frame = cap.read()
+            if ret == True:
+                image_pil = Image.fromarray(frame)
+                new_image = place_emoji(frame, image_pil, detector, predictor)
+                out.write(np.array(new_image))
+            else:
+                break
+            
+        cap.release()
+        out.release()
+        cv2.destroyAllWindows()
+    

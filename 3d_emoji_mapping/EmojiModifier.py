@@ -45,8 +45,8 @@ class EmojiModifier(object):
 
         self.refresh_open_gl()
         
-        self.open_mouth_x(filename, emoji, mouth[0])
-        self.open_mouth_y(filename, emoji, mouth[1])
+        #self.open_mouth_x(filename, emoji, mouth[0])
+        #self.open_mouth_y(filename, emoji, mouth[1])
         
         #self.open_mouth(emoji, 1)
         #self.set_angry(emoji)
