@@ -25,8 +25,8 @@ class EmojiModifier(object):
         object_pos = np.array([0.0, 0.0, -18])
 
         light_pos = np.array([5, -5, -15])
-        light_pos_2 = np.array([0, 0, -15])
-        light_pos_3 = np.array([0, 5, -15])
+        #light_pos_2 = np.array([0, 0, -15])
+        #light_pos_3 = np.array([0, 5, -15])
         light_pos_4 = np.array([-5, 5, -15])
         
         lights = []
@@ -45,8 +45,12 @@ class EmojiModifier(object):
 
         self.refresh_open_gl()
         
-        #self.open_mouth_x(filename, emoji, mouth[0])
-        #self.open_mouth_y(filename, emoji, mouth[1])
+        if filename.find("Beak_Mouth") >= 0:
+            self.beak_open_mouth_x(filename, emoji, mouth[0])
+            self.beak_open_mouth_y(filename, emoji, mouth[1])
+        elif filename.find("Normal_Mouth") >= 0:
+            self.mouth_open_mouth_y(filename, emoji, mouth)
+        
         
         #self.open_mouth(emoji, 1)
         #self.set_angry(emoji)
@@ -138,7 +142,7 @@ class EmojiModifier(object):
     def get_affine_image(self, a, b, x):
         return (a * x + b)
     
-    def open_mouth_x(self, filename, emoji, mouth_x):
+    def beak_open_mouth_x(self, filename, emoji, mouth_x):
         #move = 0.18
         move = abs(mouth_x - self.min_mouth_x) * (self.max_move_mouth_x) / abs(self.max_mouth_x - self.min_mouth_x)
         for vertex in emoji.mouth_left:
@@ -148,12 +152,17 @@ class EmojiModifier(object):
             v = emoji.vertices[vertex]
             emoji.vertices[vertex] = (v[0] + move, v[1], v[2])
     
-    def open_mouth_y(self, filename, emoji, mouth_y):
+    def beak_open_mouth_y(self, filename, emoji, mouth_y):
         max_down = abs(mouth_y - self.min_mouth_y) * abs(emoji.y_max_mouth_down - emoji.y_min_mouth_down) / abs(self.max_mouth_y - self.min_mouth_y)
         for vertex in emoji.mouth_down:
             v = emoji.vertices[vertex]
             down = abs(v[2] - emoji.z_min_mouth_down) / abs(emoji.z_max_mouth_down - emoji.z_min_mouth_down)
             emoji.vertices[vertex] = (v[0], v[1] - max_down * down, v[2])
+    
+    def mouth_open_mouth_y(self, filename, emoji, mouth):
+        x_min = x_min_mouth
+        x_inc = (x_max_mouth - x_min_mouth) / 5
+        
     
     def set_angry(self, emoji):
         self.set_angry_eye_left(emoji)

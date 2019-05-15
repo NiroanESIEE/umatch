@@ -67,14 +67,15 @@ def dist_mouth_horizontal(shape, rect):
     dist = dist_points(shape[48], shape[54]) / den
     return dist
 
-def place_emoji(image_cv2, image_pil, detector, predictor):
+def place_emoji(image_cv2, image_pil, detector, predictor, models):
     
     #image = imutils.resize(image, width=800)
     gray = cv2.cvtColor(image_cv2, cv2.COLOR_BGR2GRAY)
 
     # Detect faces
     rects = detector(gray, 1)
-
+    
+    model_index = 0
     # Loop over the face detections
     for (i, rect) in enumerate(rects):
         
@@ -85,11 +86,21 @@ def place_emoji(image_cv2, image_pil, detector, predictor):
         # Get rotation
         angleY = rotation_head_y(shape)
         angleZ = rotation_head_z(shape)
-        mouthX = dist_mouth_horizontal(shape, rect)
-        mouthY = dist_mouth_vertical(shape, rect)
-
+        
+        # Choose 3D model
+        model = models[model_index]
+        
+        # Get mouth
+        mouth = []
+        if model.find("Beak_Mouth") >= 0:
+            mouthX = dist_mouth_horizontal(shape, rect)
+            mouthY = dist_mouth_vertical(shape, rect)
+            mouth = [mouthX, mouthY]
+        elif model.find("Normal_Mouth") >= 0:
+            mouth = shape[48:68]
+        
         # Get 3D Emoji
-        emoji = EmojiModifier.EmojiModifier("Umapion_Combined", [mouthX, mouthY], 0, [0, angleY, angleZ])
+        emoji = EmojiModifier.EmojiModifier(model, mouth, 0, [0, angleY, angleZ])
         
         # Place Emoji
         w = abs(shape[8][1] - shape[19][1]) * 2
@@ -97,11 +108,15 @@ def place_emoji(image_cv2, image_pil, detector, predictor):
         x = shape[27][0] - abs(shape[8][1] - shape[19][1])
         y = shape[27][1] - abs(shape[8][1] - shape[19][1])
         
-        xPos = int(x + (w / 2) - emoji.image.width/2)
-        yPos = int(y + (h / 2) - emoji.image.height/2)
+        emoji.image = emoji.image.resize((w, h), Image.ANTIALIAS)
         
-        image_pil.paste(emoji.image, (xPos, yPos, emoji.image.width+xPos, emoji.image.height+yPos), emoji.image)
-        image_pil.save("imagePil.png", 'png')
+        image_pil.paste(emoji.image, (x, y, (x + w), (y + h)), emoji.image)
+        #image_pil.save("imagePil.png", 'png')
+        
+        if model_index >= (len(models) - 1):
+            model_index = 0
+        else:
+            model_index += 1
         
 
     if not os.path.exists(folder):
@@ -117,6 +132,9 @@ if __name__ == "__main__":
     args = ap.parse_args()
     landmark_predictor = "shape_predictor_68_face_landmarks.dat"
     folder = 'output\\'
+    
+    models = ["Umatchicken_Beak_Mouth", "Umapion_Beak_Mouth", "Umatchii_Normal_Mouth"]
+    
 
     # Initialize face detector and facial landmark predictor
     detector = dlib.get_frontal_face_detector()
@@ -126,10 +144,10 @@ if __name__ == "__main__":
     if args.picture:
         image_cv2 = cv2.imread(args.picture)
         image_pil = Image.open(args.picture)
-        new_image = place_emoji(image_cv2, image_pil, detector, predictor)
+        new_image = place_emoji(image_cv2, image_pil, detector, predictor, models)
         new_image.save(folder + "output.png", 'png')
-    elif args.video:
         
+    elif args.video:
         # Video
         cap = cv2.VideoCapture(args.video)
         
@@ -140,7 +158,7 @@ if __name__ == "__main__":
             ret, frame = cap.read()
             if ret == True:
                 image_pil = Image.fromarray(frame)
-                new_image = place_emoji(frame, image_pil, detector, predictor)
+                new_image = place_emoji(frame, image_pil, detector, predictor, models)
                 out.write(np.array(new_image))
             else:
                 break
