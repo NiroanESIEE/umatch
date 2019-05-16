@@ -147,7 +147,7 @@ class ObjectReader(object):
                 """
             
             self.get_mouth_vertices()
-            self.get_eyes()
+            #self.get_eyes()
 
         except IOError:
             print(".obj file not found.")
@@ -216,6 +216,7 @@ class ObjectReader(object):
             
             self.mouth_left = set(self.mouth_left)
             self.mouth_right = set(self.mouth_right)
+            
         else:
             for face in self.materials_faces["Mouth"]:
                 for vertex in self.faces[face]:

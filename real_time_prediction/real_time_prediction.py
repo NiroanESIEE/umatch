@@ -185,8 +185,8 @@ while True:
         shape = face_utils.shape_to_np(shape)
 
         for (x, y) in shape:
-            cv2.circle(frame, (x, y), 1, (0, 0, 255), -1)
-
+            cv2.circle(frame, (x, y), 1, (0, 255, 0), -1)
+        
         features = []
         features.append(dist_between_eyebrow(shape))
         features.append(dist_corner_eye_right(shape))
@@ -208,7 +208,7 @@ while True:
         emotion = loadmod.predict([features])
         print(emotion)
         
-        print(dist_mouth_vertical(shape, rect))
+        #print(dist_mouth_vertical(shape, rect))
         
     # show the frame
     end = time.time()
