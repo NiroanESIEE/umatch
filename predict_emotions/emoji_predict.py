@@ -52,6 +52,8 @@ def face_detection(rects, loadmod, image):
         posX = shape[28][0] - abs(shape[9][1] - shape[20][1])
         posY = shape[28][1] - abs(shape[9][1] - shape[20][1])
         
+        #for (x, y) in shape:
+        #    cv2.circle(image, (x, y), 1, (0, 255, 0), -1)
         
         place_emoji(image, emoji, posX, posY, taille)
 
@@ -219,7 +221,7 @@ if __name__ == "__main__":
 
     start = time.time()
     # load the input image, resize it, and convert it to grayscale
-    image = cv2.imread("images/H.jpg")
+    image = cv2.imread("images/C.jpg")
     image = imutils.resize(image, width=500)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     

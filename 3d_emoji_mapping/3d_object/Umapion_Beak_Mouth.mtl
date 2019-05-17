@@ -1,9 +1,11 @@
-newmtl BeakDownSG
+newmtl LeftEyeColorSG
 illum 4
-Kd 0.02 0.02 0.02
+Kd 0.04 0.04 0.04
 Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
 Ni 1.00
+Ks 0.50 0.50 0.50
+Ns 18.00
 newmtl RightEyeColorSG
 illum 4
 Kd 0.01 0.01 0.01
@@ -18,17 +20,15 @@ Kd 0.13 0.17 0.24
 Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
 Ni 1.00
-newmtl LeftEyeColorSG
-illum 4
-Kd 0.02 0.02 0.02
-Ka 0.00 0.00 0.00
-Tf 1.00 1.00 1.00
-Ni 1.00
 newmtl BeakUpSG
 illum 4
-Kd 0.04 0.04 0.04
+Kd 0.42 0.42 0.42
 Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
 Ni 1.00
-Ks 0.50 0.50 0.50
-Ns 18.00
+newmtl BeakDownSG
+illum 4
+Kd 0.22 0.22 0.22
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+Ni 1.00

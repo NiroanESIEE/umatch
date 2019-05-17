@@ -13,11 +13,20 @@ class EmojiModifier(object):
     def __init__(self, filename, mouth, eyes, rotations):
 
         self.image = 0
+        
+        # Image mouth extrem values
         self.min_mouth_x = 0.17
         self.max_mouth_x = 0.46
         self.max_move_mouth_x = 0.18
         self.min_mouth_y = 0.12
         self.max_mouth_y = 0.40
+        
+        # Normal mouth model extrem values
+        self.min_x_move_from_moy = 0.5
+        self.max_x_move_from_moy = 1.0
+        self.min_y_move_from_moy = 0.3
+        self.max_y_move_from_moy = 0.5
+        self.max_mouth_y_normal = 0.3
 
         emoji = ObjectReader.ObjectReader("3d_object/" + filename + ".obj", "3d_object/" + filename + ".mtl")
 
@@ -47,15 +56,15 @@ class EmojiModifier(object):
         self.init_open_gl(display, object_pos, rotations)
 
         self.refresh_open_gl()
-        print(emoji.x_max_mouth - emoji.x_min_mouth)
+        
+        #print(emoji.x_max_mouth - emoji.x_min_mouth)
         if filename.find("Beak_Mouth") >= 0:
             self.beak_open_mouth_x(emoji, mouth[0])
             self.beak_open_mouth_y(emoji, mouth[1])
         elif filename.find("Normal_Mouth") >= 0:
-            a = 0
+            self.mouth_extend_mouth_y(emoji, mouth[1])
             #self.mouth_open_mouth_y(emoji, mouth)
-            #self.mouth_extend_mouth_x(emoji, mouth[0])
-            #self.mouth_extend_mouth_y(emoji, mouth[1])
+            self.mouth_extend_mouth_x(emoji, mouth[0])
 
         
         #self.open_mouth(emoji, 1)
@@ -203,21 +212,31 @@ class EmojiModifier(object):
                         down_vertices[i] = [vertex]
                     break
         
+        move = self.get_mouth_extend_mouth_y(emoji, mouth[1])
+        
         # Up
         for gp in up_vertices:
-            ratio = 1 - (dists[gp] / max_vert_up)
+            ratio = 1 - (dists[gp] * 0.4 / max_vert_up)
+            #inc_y = ratio * abs(emoji.y_max_mouth - emoji.y_moy_mouth - emoji.eps_normal_mouth_y)
             inc_y = ratio * abs(emoji.y_max_mouth - emoji.y_moy_mouth)
             for vertex in up_vertices[gp]:
                 v = emoji.vertices[vertex]
-                emoji.vertices[vertex] = (v[0], v[1] - inc_y, v[2] + 0.2)
+                new_y = v[1] - inc_y + move
+                #if new_y < (emoji.y_moy_mouth + emoji.eps_normal_mouth_y):
+                #    new_y = emoji.y_moy_mouth + emoji.eps_normal_mouth_y + 0.01
+                emoji.vertices[vertex] = (v[0], new_y, v[2] + 0.2)
         
         # Down
         for gp in down_vertices:
-            ratio = 1 - (dists[gp] / max_vert_down)
+            ratio = 1 - (dists[gp] * 0.6 / max_vert_down)
+            #inc_y = ratio * abs(emoji.y_min_mouth - (emoji.y_moy_mouth - emoji.eps_normal_mouth_y))
             inc_y = ratio * abs(emoji.y_min_mouth - emoji.y_moy_mouth)
             for vertex in up_vertices[gp]:
                 v = emoji.vertices[vertex]
-                emoji.vertices[vertex] = (v[0], v[1] + inc_y, v[2] + 0.2)
+                new_y = v[1] + inc_y - move
+                #if new_y > (emoji.y_moy_mouth - emoji.eps_normal_mouth_y):
+                #    new_y = emoji.y_moy_mouth - emoji.eps_normal_mouth_y - 0.01
+                emoji.vertices[vertex] = (v[0], new_y, v[2] + 0.2)
         
     
     def get_max_mouth(self, mouth):
@@ -276,26 +295,48 @@ class EmojiModifier(object):
             emoji.vertices[emoji.right_eye[i]] = (v[0], self.get_affine_image(a, b, v[0]), v[2])
 
     def mouth_extend_mouth_x(self, emoji, mouth_x):
-        move = abs(mouth_x - self.min_mouth_x) * abs(emoji.x_max_mouth - emoji.x_min_mouth) / abs(self.max_mouth_x - self.min_mouth_x)
-        #a = (self.emoji_max_x_dist - self.emoji_min_x_dist)/ (self.max_mouth_x - self.min_mouth_x)
-        #b = self.emoji_min_x_dist - a * self.min_mouth_x
-        #move = ((a * mouth_x + b) - self.emoji_min_x_dist)/2
-        #move = 0
+        
+        a_left = ((emoji.x_moy_mouth - self.max_x_move_from_moy) - (emoji.x_moy_mouth - self.min_x_move_from_moy)) / (self.max_mouth_x - self.min_mouth_x)
+        b_left = (emoji.x_moy_mouth - self.min_x_move_from_moy) - a_left * self.min_mouth_x
+        new_x_left = self.get_affine_image(a_left, b_left, mouth_x)
+        move = emoji.x_min_mouth - new_x_left
+        
         for vertex in emoji.mouth_left:
             v = emoji.vertices[vertex]
-            emoji.vertices[vertex] = (v[0] + move, v[1], v[2])
+            emoji.vertices[vertex] = (v[0] - move, v[1], v[2])
         for vertex in emoji.mouth_right:
             v = emoji.vertices[vertex]
-            emoji.vertices[vertex] = (v[0] - move, v[1], v[2])
+            emoji.vertices[vertex] = (v[0] + move, v[1], v[2])
+        
+        
+    def get_mouth_extend_mouth_y(self, emoji, mouth_y):
+        
+        a_up = ((emoji.y_moy_mouth + self.max_y_move_from_moy) - (emoji.y_moy_mouth + self.min_y_move_from_moy)) / (self.max_mouth_y_normal - self.min_mouth_y)
+        b_up = (emoji.y_moy_mouth + self.min_y_move_from_moy) - a_up * self.min_mouth_y
+        new_y_up = self.get_affine_image(a_up, b_up, mouth_y)
+        move = new_y_up - emoji.y_max_mouth
+        
+        return move
 
     def mouth_extend_mouth_y(self, emoji, mouth_y):
-        move = abs(mouth_y - self.min_mouth_y) * abs(emoji.y_max_mouth - emoji.y_min_mouth) / abs(self.max_mouth_y - self.min_mouth_y)
-        #a = (self.emoji_max_y_dist - self.emoji_min_y_dist) / (self.max_mouth_y - self.min_mouth_y)
-        #b = self.emoji_min_y_dist - a * self.min_mouth_y
-        #move = ((a * mouth_y + b) - self.emoji_min_y_dist) / 2
+        
+        a_up = ((emoji.y_moy_mouth + self.max_y_move_from_moy) - (emoji.y_moy_mouth + self.min_y_move_from_moy)) / (self.max_mouth_y_normal - self.min_mouth_y)
+        b_up = (emoji.y_moy_mouth + self.min_y_move_from_moy) - a_up * self.min_mouth_y
+        new_y_up = self.get_affine_image(a_up, b_up, mouth_y)
+        move = new_y_up - emoji.y_max_mouth
+        
         for vertex in emoji.mouth_up:
             v = emoji.vertices[vertex]
-            emoji.vertices[vertex] = (v[0], v[1] - move, v[2])
+            new_y = v[1] + move
+            if new_y < (emoji.y_moy_mouth + emoji.eps_normal_mouth_y):
+                new_y = emoji.y_moy_mouth + emoji.eps_normal_mouth_y + 0.01
+            emoji.vertices[vertex] = (v[0], new_y, v[2] + 0.3)
         for vertex in emoji.mouth_down:
             v = emoji.vertices[vertex]
-            emoji.vertices[vertex] = (v[0], v[1] + move, v[2])
+            new_y = v[1] - move
+            if new_y > (emoji.y_moy_mouth - emoji.eps_normal_mouth_y):
+                new_y = emoji.y_moy_mouth - emoji.eps_normal_mouth_y - 0.01
+            emoji.vertices[vertex] = (v[0], new_y, v[2] + 0.3)
+        
+        
+        
