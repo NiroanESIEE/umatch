@@ -21,7 +21,7 @@ result = []
 
 
 #FONCTIONS
-def face_detection(rects):
+def face_detection(rects, emotion):
     """
     """
     for (i, rect) in enumerate(rects):
@@ -46,6 +46,7 @@ def face_detection(rects):
         features.append(dist_mouth_cheeks_left(shape))
         features.append(dist_mouth_corner(shape))
 
+        result.append(emotion)
         param.append(features)
 
 def dist_points(p1, p2):
@@ -196,8 +197,8 @@ if __name__ == "__main__":
             
             # Detection des visages
             rects = detector(gray, 1)
-            face_detection(rects)
-            result.append(folder)
+            face_detection(rects, folder)
+
     
     logreg = LogisticRegression(C=1e5, max_iter= 20000,solver='sag', multi_class='multinomial')
     logreg.fit(param, result)
