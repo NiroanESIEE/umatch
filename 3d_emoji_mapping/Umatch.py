@@ -119,20 +119,20 @@ def place_emoji(image_cv2, image_pil, detector, predictor, models):
         angleZ = rotation_head_z(shape)
         
         # Choose 3D model
-        model = models[model_index]
-        #model = "Umatchii_Normal_Mouth"
+        #model = models[model_index]
+        model = "Umapion_Beak_Mouth"
         
         # Get mouth
-        mouth = []
-        if model.find("Beak_Mouth") >= 0:
-            mouthX = dist_mouth_horizontal(shape, rect)
-            mouthY = dist_mouth_vertical(shape, rect)
-            mouth = [mouthX, mouthY]
-        elif model.find("Normal_Mouth") >= 0:
-            mouth = shape[48:68]
+        mouthX = dist_mouth_horizontal(shape, rect)
+        mouthY = dist_mouth_vertical(shape, rect)
+        mouth = [mouthX, mouthY]
+
+        if model.find("Normal_Mouth") >= 0:
+            mouth.append(shape[48:67])
         
         # Get 3D Emoji
         emoji = EmojiModifier.EmojiModifier(model, mouth, 0, [0, angleY, angleZ])
+        emoji.image.save("popo.png", "png")
         
         # Place Emoji
         w = abs(shape[8][1] - shape[19][1]) * 2
@@ -172,9 +172,15 @@ if __name__ == "__main__":
     # Initialize face detector and facial landmark predictor
     detector = dlib.get_frontal_face_detector()
     predictor = dlib.shape_predictor(landmark_predictor)
-    
+
+    image_cv2 = cv2.imread("C.jpg")
+    image_pil = Image.open("C.jpg")
+    new_image = place_emoji(image_cv2, image_pil, detector, predictor, models)
+    new_image.save(folder + "output.png", 'png')
+
+
     # Image
-    if args.picture:
+    """if args.picture:
         image_cv2 = cv2.imread(args.picture)
         image_pil = Image.open(args.picture)
         new_image = place_emoji(image_cv2, image_pil, detector, predictor, models)
@@ -203,5 +209,5 @@ if __name__ == "__main__":
         os.remove("tmp.jpg")
         cap.release()
         out.release()
-        cv2.destroyAllWindows()
+        cv2.destroyAllWindows()"""
     
