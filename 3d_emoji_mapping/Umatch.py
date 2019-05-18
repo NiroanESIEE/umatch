@@ -120,7 +120,7 @@ def place_emoji(image_cv2, image_pil, detector, predictor, models):
         
         # Choose 3D model
         #model = models[model_index]
-        model = "Umapion_Beak_Mouth"
+        model = "Umatchii_Normal_Mouth"
         
         # Get mouth
         mouthX = dist_mouth_horizontal(shape, rect)
@@ -173,8 +173,8 @@ if __name__ == "__main__":
     detector = dlib.get_frontal_face_detector()
     predictor = dlib.shape_predictor(landmark_predictor)
 
-    image_cv2 = cv2.imread("C.jpg")
-    image_pil = Image.open("C.jpg")
+    image_cv2 = cv2.imread("D.jpg")
+    image_pil = Image.open("D.jpg")
     new_image = place_emoji(image_cv2, image_pil, detector, predictor, models)
     new_image.save(folder + "output.png", 'png')
 
