@@ -61,10 +61,13 @@ class EmojiModifier(object):
 
         self.refresh_open_gl()
 
+        #self.set_happy(emoji)
+        """
         if(eyes == "angry"):
             self.set_angry(emoji)
         elif(eyes == "sad"):
             self.set_sad(emoji)
+        """
 
         if filename.find("Beak_Mouth") >= 0:
             self.beak_open_mouth_x(emoji, mouth[0])
@@ -296,8 +299,7 @@ class EmojiModifier(object):
     def set_sad(self, emoji):
         self.set_sad_eye_left(emoji)
         self.set_sad_eye_right(emoji)
-    
-    
+
     def set_sad_eye_left(self, emoji):
         p1 = (emoji.x_min_left, emoji.y_min_left * 1.2)
         p2 = (emoji.x_max_left, emoji.y_max_left * 0.9)
@@ -315,6 +317,24 @@ class EmojiModifier(object):
         for i in range(len(emoji.right_eye)):
             v = emoji.vertices[emoji.right_eye[i]]
             emoji.vertices[emoji.right_eye[i]] = (v[0], self.get_affine_image(a, b, v[0]), v[2])
+
+    def set_happy(self, emoji):
+        self.set_happy_eye_left(emoji)
+        #self.set_happy_eye_right(emoji)
+
+    def set_happy_eye_left(self, emoji):
+        #mid = abs(emoji.y_max_happy_eye_left - emoji.y_mid_happy_eye_left)
+        r = emoji.x_dist_eye_left / 2.0
+        b = emoji.y_mid_happy_eye_left
+        x_mid = emoji.x_min_left + r
+        for vertex in emoji.left_eye_happy:
+            v = emoji.vertices[vertex]
+            x = v[0] - x_mid
+            new_y = (sqrt((r * r) - (x * x))) + b
+            if v[1] <= emoji.y_max_happy_eye_left:
+                if v[1] <= new_y:
+                    #new_y = v[1] + abs(emoji.y_max_happy_eye_left - emoji.y_mid_happy_eye_left) * 2.0
+                    emoji.vertices[vertex] = (v[0], new_y, v[2])
 
     def mouth_extend_mouth_x(self, emoji, mouth_x):
         #move = abs(mouth_x - self.min_mouth_x) * abs(emoji.x_max_mouth - emoji.x_min_mouth) / abs(self.max_mouth_x - self.min_mouth_x)
