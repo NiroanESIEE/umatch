@@ -188,10 +188,10 @@ if __name__ == "__main__":
     
     
     #Parcours les images de différentes emotions
-    for folder in os.listdir("learning_images"):
-        for img in os.listdir("learning_images/" + folder):
+    for folder in os.listdir("learning_images_v2"):
+        for img in os.listdir("learning_images_v2/" + folder):
             # Charge l'image, la redimensionne et la met en noir et blanc
-            image = cv2.imread("learning_images/" + folder + "/" + img)
+            image = cv2.imread("learning_images_v2/" + folder + "/" + img)
             image = imutils.resize(image, width=500)
             gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
             
@@ -204,7 +204,7 @@ if __name__ == "__main__":
     logreg.fit(param, result)
     
     #Sauvegarder le model
-    filename = "learning_save.sav"
+    filename = "new_LR_learning_v2.sav"
     pickle.dump(logreg, open(filename, 'wb'))
     
     

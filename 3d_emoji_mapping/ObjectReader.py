@@ -151,7 +151,7 @@ class ObjectReader(object):
                 """
             
             self.get_mouth_vertices()
-            #self.get_eyes()
+            self.get_eyes()
 
         except IOError:
             print(".obj file not found.")
@@ -267,7 +267,7 @@ class ObjectReader(object):
                     
         
     def get_eyes(self):
-        
+        print("AVANT : " + str(len(self.right_eye)))
         for face in self.materials_faces["LeftEyeColorSG"]:
             for vertex in self.faces[face]:
                 
@@ -322,8 +322,8 @@ class ObjectReader(object):
                 self.right_eye.pop(i)
                 continue
             i += 1
-        
-        
+
+        print("APRES : " + str(len(self.right_eye)))
         
         
         

@@ -151,7 +151,7 @@ def dist_mouth_vertical(shape, rect):
 print("[INFO] loading facial landmark predictor...")
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
-loadmod = pickle.load(open("learning_save.sav", 'rb'))
+loadmod = pickle.load(open("new_LR_learning.sav", 'rb'))
 
 # initialize the video stream and allow the cammera sensor to warmup
 print("[INFO] camera sensor warming up...")

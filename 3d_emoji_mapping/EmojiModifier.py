@@ -60,7 +60,12 @@ class EmojiModifier(object):
         self.init_open_gl(display, object_pos, rotations)
 
         self.refresh_open_gl()
-        print(emoji.x_max_mouth - emoji.x_min_mouth)
+
+        if(eyes == "angry"):
+            self.set_angry(emoji)
+        elif(eyes == "sad"):
+            self.set_sad(emoji)
+
         if filename.find("Beak_Mouth") >= 0:
             self.beak_open_mouth_x(emoji, mouth[0])
             self.beak_open_mouth_y(emoji, mouth[1])
@@ -71,8 +76,8 @@ class EmojiModifier(object):
             
         
         #self.open_mouth(emoji, 1)
-        #self.set_angry(emoji)
-        #self.set_sad(emoji)
+
+
         
         #glTranslatef(object_pos[0], object_pos[1], object_pos[2])
         self.set_pos_rotations(object_pos, rotations)

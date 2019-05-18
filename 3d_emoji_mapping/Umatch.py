@@ -8,9 +8,148 @@ import os
 from math import sqrt, acos
 import numpy as np
 from PIL import Image
+import pickle
 import EmojiModifier
 
 people = []
+
+def dist_points(p1, p2):
+    dist = sqrt(pow(p1[0] - p2[0], 2) + pow(p1[1] - p2[1], 2))
+    return dist
+
+
+# EYES
+def dist_between_eyebrow(shape):
+    den = dist_points(shape[16], shape[0])
+    if den == 0:
+        den = 0.1
+    dist = dist_points(shape[22], shape[21]) / den
+    return dist
+
+
+def dist_corner_eye_right(shape):
+    den = dist_points(shape[15], shape[22])
+    if den == 0:
+        den = 0.1
+    dist = dist_points(shape[42], shape[22]) / den
+    return dist
+
+
+def dist_corner_eye_left(shape):
+    den = dist_points(shape[1], shape[21])
+    if den == 0:
+        den = 0.1
+    dist = dist_points(shape[39], shape[21]) / den
+    return dist
+
+
+def dist_eyebrow_eye_right(shape):
+    den = dist_points(shape[41], shape[19])
+    if den == 0:
+        den = 0.1
+    dist = dist_points(shape[37], shape[19]) / den
+    return dist
+
+
+def dist_eyebrow_eye_left(shape):
+    den = dist_points(shape[46], shape[24])
+    if den == 0:
+        den = 0.1
+    dist = dist_points(shape[44], shape[24]) / den
+    return dist
+
+
+def dist_open_eye_right(shape):
+    den = dist_points(shape[45], shape[42])
+    if den == 0:
+        den = 0.1
+    dist = dist_points(shape[47], shape[43]) / den
+    return dist
+
+
+def dist_open_eye_left(shape):
+    den = dist_points(shape[39], shape[36])
+    if den == 0:
+        den = 0.1
+    dist = dist_points(shape[40], shape[38]) / den
+    return dist
+
+
+# NOSE
+def dist_nose_width(shape):
+    den = dist_points(shape[14], shape[2])
+    if den == 0:
+        den = 0.1
+    dist = dist_points(shape[35], shape[31]) / den
+    return dist
+
+
+def dist_nose_height(shape):
+    den = dist_points(shape[6], shape[27])
+    if den == 0:
+        den = 0.1
+    dist = dist_points(shape[31], shape[27]) / den
+    return dist
+
+
+# MOUTH
+def dist_mouth(shape):
+    width = dist_points(shape[54], shape[48])
+    height = dist_points(shape[57], shape[51])
+    if height == 0:
+        height = 0.1
+    dist = float(width) / float(height)
+    return dist
+
+
+def dist_min_mouth(shape):
+    width = dist_points(shape[54], shape[48])
+    height = dist_points(shape[66], shape[62])
+    if height == 0:
+        height = 0.1
+    dist = float(width) / float(height)
+    return dist
+
+
+def dist_mouth_width(shape):
+    den = dist_points(shape[13], shape[3])
+    if den == 0:
+        den = 0.1
+    dist = dist_points(shape[54], shape[48]) / den
+    return dist
+
+
+def dist_mouth_cheeks_right(shape):
+    den = dist_points(shape[13], shape[3])
+    if den == 0:
+        den = 0.1
+    dist = dist_points(shape[13], shape[54]) / den
+    return dist
+
+
+def dist_mouth_cheeks_left(shape):
+    den = dist_points(shape[13], shape[3])
+    if den == 0:
+        den = 0.1
+    dist = dist_points(shape[48], shape[3]) / den
+    return dist
+
+
+def dist_mouth_corner(shape):
+    den = dist_points(shape[8], shape[51])
+    if den == 0:
+        den = 0.1
+    dist = dist_points(shape[54], shape[51]) / den
+    return dist
+
+
+def dist_mouth_vertical(shape, rect):
+    den = abs(rect.tl_corner().y - rect.br_corner().y)
+    if den == 0:
+        den = 0.1
+    dist = dist_points(shape[51], shape[57]) / den
+    return dist
+
 
 def dist_points(p1, p2):
     dist = sqrt(pow(p1[0] - p2[0], 2) + pow(p1[1] - p2[1], 2))
@@ -113,14 +252,35 @@ def place_emoji(image_cv2, image_pil, detector, predictor, models):
         # Detect face points
         shape = predictor(gray, rect)
         shape = face_utils.shape_to_np(shape)
-        
+
+        features = []
+        features.append(dist_between_eyebrow(shape))
+        features.append(dist_corner_eye_right(shape))
+        features.append(dist_corner_eye_left(shape))
+        features.append(dist_eyebrow_eye_right(shape))
+        features.append(dist_eyebrow_eye_left(shape))
+        features.append(dist_open_eye_right(shape))
+        features.append(dist_open_eye_left(shape))
+        features.append(dist_nose_width(shape))
+        features.append(dist_nose_height(shape))
+        features.append(dist_mouth(shape))
+        features.append(dist_min_mouth(shape))
+        features.append(dist_mouth_width(shape))
+        features.append(dist_mouth_cheeks_right(shape))
+        features.append(dist_mouth_cheeks_left(shape))
+        features.append(dist_mouth_corner(shape))
+
+        # Prediction
+        emotion = loadmod.predict([features])
+
         # Get rotation
         angleY = rotation_head_y(shape)
         angleZ = rotation_head_z(shape)
         
         # Choose 3D model
         #model = models[model_index]
-        model = "Umatchii_Normal_Mouth"
+        #model = "Umatchii_Normal_Mouth"
+        model = "Umatchii_Straight_Normal_Mouth"
         
         # Get mouth
         mouthX = dist_mouth_horizontal(shape, rect)
@@ -131,7 +291,7 @@ def place_emoji(image_cv2, image_pil, detector, predictor, models):
             mouth.append(shape[48:67])
         
         # Get 3D Emoji
-        emoji = EmojiModifier.EmojiModifier(model, mouth, 0, [0, angleY, angleZ])
+        emoji = EmojiModifier.EmojiModifier(model, mouth, emotion, [0, angleY, angleZ])
         emoji.image.save("popo.png", "png")
         
         # Place Emoji
@@ -163,6 +323,7 @@ if __name__ == "__main__":
     ap.add_argument("-v","--video", help="Video path")
     args = ap.parse_args()
     landmark_predictor = "shape_predictor_68_face_landmarks.dat"
+    loadmod = pickle.load(open("new_LR_learning.sav", 'rb'))
     folder = 'output\\'
     
     models = ["Umatchicken_Beak_Mouth", "Umapion_Beak_Mouth", "Umatchii_Normal_Mouth"]
@@ -173,11 +334,11 @@ if __name__ == "__main__":
     detector = dlib.get_frontal_face_detector()
     predictor = dlib.shape_predictor(landmark_predictor)
 
-    image_cv2 = cv2.imread("D.jpg")
-    image_pil = Image.open("D.jpg")
+    """image_cv2 = cv2.imread("mHAPPY.jpg")
+    image_pil = Image.open("mHAPPY.jpg")
     new_image = place_emoji(image_cv2, image_pil, detector, predictor, models)
-    new_image.save(folder + "output.png", 'png')
-    """
+    new_image.save(folder + "output.png", 'png')"""
+
 
 
     # Image
@@ -210,4 +371,4 @@ if __name__ == "__main__":
         os.remove("tmp.jpg")
         cap.release()
         out.release()
-        cv2.destroyAllWindows()"""    
+        cv2.destroyAllWindows()
