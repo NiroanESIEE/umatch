@@ -326,13 +326,8 @@ class EmojiModifier(object):
 
     def mouth_extend_mouth_y(self, emoji, mouth_y):
         #move = abs(mouth_y - self.min_mouth_y) * abs(emoji.y_max_mouth - emoji.y_min_mouth) / abs(self.max_mouth_y - self.min_mouth_y)
-<<<<<<< .mine
         a = (self.emoji_max_y_dist - self.emoji_min_y_dist) / (self.max_mouth_y - self.min_mouth_y)
         b = self.emoji_min_y_dist - a * self.min_mouth_y
-=======
-        a_up = ((emoji.y_moy_mouth + self.max_y_move_from_moy) - (emoji.y_moy_mouth + self.min_y_move_from_moy)) / (self.max_mouth_y_normal - self.min_mouth_y)
-        b_up = (emoji.y_moy_mouth + self.min_y_move_from_moy) - a_up * self.min_mouth_y
->>>>>>> .theirs
         move = (self.emoji_max_y_dist - (a * mouth_y + b)) / 2
         
         #new_mouth_height = (a * mouth_y + b)

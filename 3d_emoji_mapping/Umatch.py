@@ -210,5 +210,4 @@ if __name__ == "__main__":
         os.remove("tmp.jpg")
         cap.release()
         out.release()
-        cv2.destroyAllWindows()
-    
+        cv2.destroyAllWindows()"""    
