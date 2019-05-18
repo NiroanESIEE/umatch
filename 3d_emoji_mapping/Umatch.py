@@ -143,12 +143,12 @@ def place_emoji(image_cv2, image_pil, detector, predictor, models):
         emoji.image = emoji.image.resize((w, h), Image.ANTIALIAS)
         
         image_pil.paste(emoji.image, (x, y, (x + w), (y + h)), emoji.image)
-        image_pil.save("imagePil.png", 'png')
+        #image_pil.save("imagePil.png", 'png')
         
-#        if model_index >= (len(models) - 1):
-#            model_index = 0
-#        else:
-#            model_index += 1
+        if model_index >= (len(models) - 1):
+            model_index = 0
+        else:
+            model_index += 1
         
 
     if not os.path.exists(folder):
@@ -177,10 +177,11 @@ if __name__ == "__main__":
     image_pil = Image.open("D.jpg")
     new_image = place_emoji(image_cv2, image_pil, detector, predictor, models)
     new_image.save(folder + "output.png", 'png')
+    """
 
 
     # Image
-    """if args.picture:
+    if args.picture:
         image_cv2 = cv2.imread(args.picture)
         image_pil = Image.open(args.picture)
         new_image = place_emoji(image_cv2, image_pil, detector, predictor, models)
@@ -209,5 +210,5 @@ if __name__ == "__main__":
         os.remove("tmp.jpg")
         cap.release()
         out.release()
-        cv2.destroyAllWindows()"""
+        cv2.destroyAllWindows()
     

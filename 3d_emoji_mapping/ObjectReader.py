@@ -18,6 +18,8 @@ class ObjectReader(object):
         self.left_eye = []
         self.right_eye = []
         
+        self.mouth = []
+        
         self.mouth_up = []
         self.mouth_down = []
         
@@ -54,6 +56,8 @@ class ObjectReader(object):
         self.y_max_mouth = -10000
         
         self.eps = 0.05
+        self.eps_normal_mouth_x = 0.15
+        self.eps_normal_mouth_y = 0.02
 
         try:
             fileOBJ = open(file_name_obj)
@@ -232,6 +236,8 @@ class ObjectReader(object):
                         self.y_min_mouth = v[1]
                     if self.y_max_mouth < v[1]:
                         self.y_max_mouth = v[1]
+                    
+                    self.mouth.append(vertex)
             
             self.x_moy_mouth = (self.x_min_mouth + self.x_max_mouth) / 2
             self.y_moy_mouth = (self.y_min_mouth + self.y_max_mouth) / 2
@@ -241,20 +247,23 @@ class ObjectReader(object):
                     
                     v = self.vertices[vertex]
                     
-                    if (v[0] <= self.x_moy_mouth):
+                    
+                    if (v[0] < (self.x_moy_mouth - self.eps_normal_mouth_x)):
                         self.mouth_left.append(vertex)
-                    else:
+                    if (v[0] > (self.x_moy_mouth + self.eps_normal_mouth_x)):
                         self.mouth_right.append(vertex)
                     
-                    if (v[1] <= self.y_moy_mouth):
+                    if (v[1] < (self.y_moy_mouth - self.eps_normal_mouth_y)):
                         self.mouth_down.append(vertex)
-                    else:
+                    if (v[1] > (self.y_moy_mouth + self.eps_normal_mouth_y)):
                         self.mouth_up.append(vertex)
             
             self.mouth_down = set(self.mouth_down)
             self.mouth_up = set(self.mouth_up)
             self.mouth_left = set(self.mouth_left)
             self.mouth_right = set(self.mouth_right)
+            
+            self.mouth = set(self.mouth)
                     
         
     def get_eyes(self):

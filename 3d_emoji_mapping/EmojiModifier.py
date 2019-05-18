@@ -13,11 +13,20 @@ class EmojiModifier(object):
     def __init__(self, filename, mouth, eyes, rotations):
 
         self.image = 0
+        
+        # Image mouth extrem values
         self.min_mouth_x = 0.17
         self.max_mouth_x = 0.46
         self.max_move_mouth_x = 0.18
         self.min_mouth_y = 0.12
         self.max_mouth_y = 0.40
+        
+        # Normal mouth model extrem values
+        self.min_x_move_from_moy = 0.5
+        self.max_x_move_from_moy = 1.0
+        self.min_y_move_from_moy = 0.3
+        self.max_y_move_from_moy = 0.5
+        self.max_mouth_y_normal = 0.3
 
         emoji = ObjectReader.ObjectReader("3d_object/" + filename + ".obj", "3d_object/" + filename + ".mtl")
 
@@ -220,21 +229,31 @@ class EmojiModifier(object):
                         down_vertices[i] = [vertex]
                     break
         
+        move = self.get_mouth_extend_mouth_y(emoji, mouth[1])
+        
         # Up
         for gp in up_vertices:
-            ratio = 1 - (dists[gp] / max_vert_up)
+            ratio = 1 - (dists[gp] * 0.4 / max_vert_up)
+            #inc_y = ratio * abs(emoji.y_max_mouth - emoji.y_moy_mouth - emoji.eps_normal_mouth_y)
             inc_y = ratio * abs(emoji.y_max_mouth - emoji.y_moy_mouth)
             for vertex in up_vertices[gp]:
                 v = emoji.vertices[vertex]
-                emoji.vertices[vertex] = (v[0], v[1] - inc_y, v[2] + 0.2)
+                new_y = v[1] - inc_y + move
+                #if new_y < (emoji.y_moy_mouth + emoji.eps_normal_mouth_y):
+                #    new_y = emoji.y_moy_mouth + emoji.eps_normal_mouth_y + 0.01
+                emoji.vertices[vertex] = (v[0], new_y, v[2] + 0.2)
         
         # Down
         for gp in down_vertices:
-            ratio = 1 - (dists[gp] / max_vert_down)
+            ratio = 1 - (dists[gp] * 0.6 / max_vert_down)
+            #inc_y = ratio * abs(emoji.y_min_mouth - (emoji.y_moy_mouth - emoji.eps_normal_mouth_y))
             inc_y = ratio * abs(emoji.y_min_mouth - emoji.y_moy_mouth)
             for vertex in up_vertices[gp]:
                 v = emoji.vertices[vertex]
-                emoji.vertices[vertex] = (v[0], v[1] + inc_y, v[2] + 0.2)
+                new_y = v[1] + inc_y - move
+                #if new_y > (emoji.y_moy_mouth - emoji.eps_normal_mouth_y):
+                #    new_y = emoji.y_moy_mouth - emoji.eps_normal_mouth_y - 0.01
+                emoji.vertices[vertex] = (v[0], new_y, v[2] + 0.2)
         
     
     def get_max_mouth(self, mouth):
@@ -307,8 +326,13 @@ class EmojiModifier(object):
 
     def mouth_extend_mouth_y(self, emoji, mouth_y):
         #move = abs(mouth_y - self.min_mouth_y) * abs(emoji.y_max_mouth - emoji.y_min_mouth) / abs(self.max_mouth_y - self.min_mouth_y)
+<<<<<<< .mine
         a = (self.emoji_max_y_dist - self.emoji_min_y_dist) / (self.max_mouth_y - self.min_mouth_y)
         b = self.emoji_min_y_dist - a * self.min_mouth_y
+=======
+        a_up = ((emoji.y_moy_mouth + self.max_y_move_from_moy) - (emoji.y_moy_mouth + self.min_y_move_from_moy)) / (self.max_mouth_y_normal - self.min_mouth_y)
+        b_up = (emoji.y_moy_mouth + self.min_y_move_from_moy) - a_up * self.min_mouth_y
+>>>>>>> .theirs
         move = (self.emoji_max_y_dist - (a * mouth_y + b)) / 2
         
         #new_mouth_height = (a * mouth_y + b)
