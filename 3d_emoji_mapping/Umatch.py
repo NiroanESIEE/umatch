@@ -150,12 +150,6 @@ def dist_mouth_vertical(shape, rect):
     dist = dist_points(shape[51], shape[57]) / den
     return dist
 
-
-def dist_points(p1, p2):
-    dist = sqrt(pow(p1[0] - p2[0], 2) + pow(p1[1] - p2[1], 2))
-    return dist
-
-
 def dist_cheeks_left(shape):
     den = dist_points(shape[14], shape[2])
     if den == 0:
@@ -190,14 +184,6 @@ def rotation_head_z(shape):
     if shape[27][0] > shape[8][0]:
         angle = angle * (-1)
     return angle
-
-
-def dist_mouth_vertical(shape, rect):
-    den = abs(rect.tl_corner().y - rect.br_corner().y)
-    if den == 0:
-        den = 0.1
-    dist = dist_points(shape[51], shape[57]) / den
-    return dist
 
 
 def dist_mouth_horizontal(shape, rect):
@@ -240,7 +226,7 @@ def place_emoji(image_cv2, image_pil, detector, predictor, models):
                 center = ( (rect.tr_corner().x - rect.tl_corner().x) / 2 + rect.tl_corner().x, (rect.bl_corner().y - rect.tl_corner().y) / 2 + rect.tl_corner().y)
                 tmp.append(center)
                 
-                if people[-1][-1] >= (len(models) - 1):
+                if people[-1][-1] == (len(models) - 1):
                     
                     model_index = 0
                 else:
@@ -278,9 +264,11 @@ def place_emoji(image_cv2, image_pil, detector, predictor, models):
         angleZ = rotation_head_z(shape)
         
         # Choose 3D model
-        #model = models[model_index]
+        model = models[model_index]
         #model = "Umatchii_Normal_Mouth"
-        model = "Umatchii_Straight_Normal_Mouth"
+        #model = "Umatchii_Straight_Normal_Mouth"
+        #model = "Umatchicken_Beak_Mouth"
+        #model = "Umapion_Beak_Mouth"
         
         # Get mouth
         mouthX = dist_mouth_horizontal(shape, rect)
@@ -305,10 +293,12 @@ def place_emoji(image_cv2, image_pil, detector, predictor, models):
         image_pil.paste(emoji.image, (x, y, (x + w), (y + h)), emoji.image)
         #image_pil.save("imagePil.png", 'png')
         
+        """
         if model_index >= (len(models) - 1):
             model_index = 0
         else:
             model_index += 1
+        """
         
 
     if not os.path.exists(folder):

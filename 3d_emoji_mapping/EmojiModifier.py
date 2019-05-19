@@ -37,8 +37,8 @@ class EmojiModifier(object):
         #self.emoji_min_y_dist = self.emoji_max_y_dist - 0.5
         self.emoji_min_y_dist = 0.5
         
-        print("emoji_max_y_dist: " + str(self.emoji_max_y_dist))
-        print("emoji_min_y_dist: " + str(self.emoji_min_y_dist))
+        #print("emoji_max_y_dist: " + str(self.emoji_max_y_dist))
+        #print("emoji_min_y_dist: " + str(self.emoji_min_y_dist))
 
 
         display = (500, 500)
@@ -60,14 +60,13 @@ class EmojiModifier(object):
         self.init_open_gl(display, object_pos, rotations)
 
         self.refresh_open_gl()
-
-        #self.set_happy(emoji)
-        """
+        
         if(eyes == "angry"):
             self.set_angry(emoji)
         elif(eyes == "sad"):
             self.set_sad(emoji)
-        """
+        elif(eyes == "happy"):
+            self.set_happy(emoji)
 
         if filename.find("Beak_Mouth") >= 0:
             self.beak_open_mouth_x(emoji, mouth[0])
@@ -76,13 +75,9 @@ class EmojiModifier(object):
             self.mouth_extend_mouth_x(emoji, mouth[0])
             self.mouth_extend_mouth_y(emoji, mouth[1])
             #self.mouth_open_mouth_y(emoji, mouth)
-            
         
-        #self.open_mouth(emoji, 1)
-
-
         
-        #glTranslatef(object_pos[0], object_pos[1], object_pos[2])
+        # Set emoji position and rotation
         self.set_pos_rotations(object_pos, rotations)
         
         self.draw_object(emoji, new_light_pos)
@@ -118,18 +113,10 @@ class EmojiModifier(object):
 
     def init_open_gl(self, display, object_pos, rotations):
         gluPerspective(45, (display[0] / display[1]), 0.1, 50.0)
-        """
-        glTranslatef(object_pos[0], object_pos[1], object_pos[2])
-
-        glRotate(rotations[0], 1, 0, 0)
-        glRotate(rotations[1], 0, 1, 0)
-        glRotate(rotations[2], 0, 0, 1)
-        """
         glEnable(GL_DEPTH_TEST)
     
     def set_pos_rotations(self, object_pos, rotations):
         glTranslatef(object_pos[0], object_pos[1], object_pos[2])
-
         glRotate(rotations[0], 1, 0, 0)
         glRotate(rotations[1], 0, 1, 0)
         glRotate(rotations[2], 0, 0, 1)
@@ -171,14 +158,6 @@ class EmojiModifier(object):
         image = Image.frombytes("RGBA", display, data)
         image = image.transpose(Image.FLIP_TOP_BOTTOM)
         return image
-    
-    """
-    def open_mouth(self, emoji, open_y):
-        for vertex in emoji.mouth_up:
-            emoji.vertices[vertex] = (emoji.vertices[vertex][0], emoji.vertices[vertex][1] + open_y, emoji.vertices[vertex][2])
-        for vertex in emoji.mouth_down:
-            emoji.vertices[vertex] = (emoji.vertices[vertex][0], emoji.vertices[vertex][1] - open_y, emoji.vertices[vertex][2])
-    """
     
     def dist_points(self, p1, p2):
         dist = sqrt(pow(p1[0] - p2[0], 2) + pow(p1[1] - p2[1], 2))
@@ -283,18 +262,21 @@ class EmojiModifier(object):
         p2 = (emoji.x_max_left, emoji.y_min_left)
         a = (p2[1] - p1[1]) / (p2[0] - p1[0])
         b = p1[1] - a * p1[0]
-        for i in range(len(emoji.left_eye)):
-            v = emoji.vertices[emoji.left_eye[i]]
-            emoji.vertices[emoji.left_eye[i]] = (v[0], self.get_affine_image(a, b, v[0]), v[2])
+        
+        for vertex in emoji.left_eye:
+            v = emoji.vertices[vertex]
+            if v[1] >= emoji.y_min_left:
+                emoji.vertices[vertex] = (v[0], self.get_affine_image(a, b, v[0]), v[2])
     
     def set_angry_eye_right(self, emoji):
         p1 = (emoji.x_min_right, emoji.y_min_right)
         p2 = (emoji.x_max_right, emoji.y_max_right)
         a = (p2[1] - p1[1]) / (p2[0] - p1[0])
         b = p1[1] - a * p1[0]
-        for i in range(len(emoji.right_eye)):
-            v = emoji.vertices[emoji.right_eye[i]]
-            emoji.vertices[emoji.right_eye[i]] = (v[0], self.get_affine_image(a, b, v[0]), v[2])
+        for vertex in emoji.right_eye:
+            v = emoji.vertices[vertex]
+            if v[1] >= emoji.y_min_right:
+                emoji.vertices[vertex] = (v[0], self.get_affine_image(a, b, v[0]), v[2])
     
     def set_sad(self, emoji):
         self.set_sad_eye_left(emoji)
@@ -305,37 +287,51 @@ class EmojiModifier(object):
         p2 = (emoji.x_max_left, emoji.y_max_left * 0.9)
         a = (p2[1] - p1[1]) / (p2[0] - p1[0])
         b = p1[1] - a * p1[0]
-        for i in range(len(emoji.left_eye)):
-            v = emoji.vertices[emoji.left_eye[i]]
-            emoji.vertices[emoji.left_eye[i]] = (v[0], self.get_affine_image(a, b, v[0]), v[2])
+        for vertex in emoji.left_eye:
+            v = emoji.vertices[vertex]
+            if v[1] >= emoji.y_min_left:
+                emoji.vertices[vertex] = (v[0], self.get_affine_image(a, b, v[0]), v[2])
     
     def set_sad_eye_right(self, emoji):
         p1 = (emoji.x_min_right, emoji.y_max_right * 0.9)
         p2 = (emoji.x_max_right, emoji.y_min_right * 1.2)
         a = (p2[1] - p1[1]) / (p2[0] - p1[0])
         b = p1[1] - a * p1[0]
-        for i in range(len(emoji.right_eye)):
-            v = emoji.vertices[emoji.right_eye[i]]
-            emoji.vertices[emoji.right_eye[i]] = (v[0], self.get_affine_image(a, b, v[0]), v[2])
+        for vertex in emoji.right_eye:
+            v = emoji.vertices[vertex]
+            if v[1] >= emoji.y_min_right:
+                emoji.vertices[vertex] = (v[0], self.get_affine_image(a, b, v[0]), v[2])
 
     def set_happy(self, emoji):
         self.set_happy_eye_left(emoji)
-        #self.set_happy_eye_right(emoji)
+        self.set_happy_eye_right(emoji)
 
     def set_happy_eye_left(self, emoji):
-        #mid = abs(emoji.y_max_happy_eye_left - emoji.y_mid_happy_eye_left)
-        r = emoji.x_dist_eye_left / 2.0
-        b = emoji.y_mid_happy_eye_left
-        x_mid = emoji.x_min_left + r
-        for vertex in emoji.left_eye_happy:
+        eye_radius = abs(emoji.x_max_left - emoji.x_min_left) / 2.0
+        x_mid = emoji.x_min_left + eye_radius
+        height = emoji.y_mid_happy_eye_left
+        for vertex in emoji.left_eye:
             v = emoji.vertices[vertex]
-            x = v[0] - x_mid
-            new_y = (sqrt((r * r) - (x * x))) + b
-            if v[1] <= emoji.y_max_happy_eye_left:
-                if v[1] <= new_y:
-                    #new_y = v[1] + abs(emoji.y_max_happy_eye_left - emoji.y_mid_happy_eye_left) * 2.0
-                    emoji.vertices[vertex] = (v[0], new_y, v[2])
-
+            x = x_mid - v[0]
+            if eye_radius <= abs(x):
+                continue
+            new_y = (sqrt((eye_radius * eye_radius) - (x * x))) + height
+            if v[1] <= new_y:
+                emoji.vertices[vertex] = (v[0], new_y, v[2])
+    
+    def set_happy_eye_right(self, emoji):
+        eye_radius = abs(emoji.x_max_right - emoji.x_min_right) / 2.0
+        x_mid = emoji.x_min_right + eye_radius
+        height = emoji.y_mid_happy_eye_right
+        for vertex in emoji.right_eye:
+            v = emoji.vertices[vertex]
+            x = x_mid - v[0]
+            if eye_radius <= abs(x):
+                continue
+            new_y = (sqrt((eye_radius * eye_radius) - (x * x))) + height
+            if v[1] <= new_y:
+                emoji.vertices[vertex] = (v[0], new_y, v[2])
+    
     def mouth_extend_mouth_x(self, emoji, mouth_x):
         #move = abs(mouth_x - self.min_mouth_x) * abs(emoji.x_max_mouth - emoji.x_min_mouth) / abs(self.max_mouth_x - self.min_mouth_x)
         a = (self.emoji_max_x_dist - self.emoji_min_x_dist)/ (self.max_mouth_x - self.min_mouth_x)
@@ -359,7 +355,7 @@ class EmojiModifier(object):
         #inc_y = 1 - (self.emoji_max_y_dist )
         
         #move = - 0.5
-        print("move : " + str(move))
+        #print("move : " + str(move))
         
         a2 = 1 / (emoji.y_max_mouth - emoji.y_moy_mouth)
         b2 = 1 - a2 * emoji.y_max_mouth
