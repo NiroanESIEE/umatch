@@ -1,4 +1,5 @@
-from math import sqrt
+from math import sqrt, acos
+import numpy as np
 
 def dist_points(p1, p2):
     dist = sqrt(pow(p1[0] - p2[0], 2) + pow(p1[1] - p2[1], 2))
@@ -129,6 +130,21 @@ def dist_mouth_corner(shape):
     dist = dist_points(shape[54], shape[51]) / den
     return dist
 
+def dist_cheeks_left(shape):
+    den = dist_points(shape[14], shape[2])
+    if den == 0:
+        den = 0.1
+    dist = dist_points(shape[33], shape[2]) / den
+    return dist
+
+
+def dist_cheeks_right(shape):
+    den = dist_points(shape[14], shape[2])
+    if den == 0:
+        den = 0.1
+    dist = dist_points(shape[14], shape[33]) / den
+    return dist
+
 def rotation_head_y(shape):
     angle_y_max = 90
     ratio_left = dist_cheeks_left(shape)
@@ -154,6 +170,13 @@ def dist_mouth_horizontal(shape, rect):
     if den == 0:
         den = 0.1
     dist = dist_points(shape[48], shape[54]) / den
+    return dist
+
+def dist_mouth_vertical(shape, rect):
+    den = abs(rect.tl_corner().y - rect.br_corner().y)
+    if den == 0:
+        den = 0.1
+    dist = dist_points(shape[51], shape[57]) / den
     return dist
 
 def get_features(shape):

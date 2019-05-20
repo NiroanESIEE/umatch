@@ -1,11 +1,9 @@
 # IMPORTS
 from imutils import face_utils
 import argparse
-import imutils
 import dlib
 import cv2
 import os
-from math import sqrt, acos
 import numpy as np
 from PIL import Image
 import pickle
@@ -61,22 +59,7 @@ def place_emoji(image_cv2, image_pil, detector, predictor, models):
         shape = predictor(gray, rect)
         shape = face_utils.shape_to_np(shape)
 
-        features = []
-        features.append(dist_between_eyebrow(shape))
-        features.append(dist_corner_eye_right(shape))
-        features.append(dist_corner_eye_left(shape))
-        features.append(dist_eyebrow_eye_right(shape))
-        features.append(dist_eyebrow_eye_left(shape))
-        features.append(dist_open_eye_right(shape))
-        features.append(dist_open_eye_left(shape))
-        features.append(dist_nose_width(shape))
-        features.append(dist_nose_height(shape))
-        features.append(dist_mouth(shape))
-        features.append(dist_min_mouth(shape))
-        features.append(dist_mouth_width(shape))
-        features.append(dist_mouth_cheeks_right(shape))
-        features.append(dist_mouth_cheeks_left(shape))
-        features.append(dist_mouth_corner(shape))
+        features = get_features(shape)
 
         # Prediction
         emotion = loadmod.predict([features])
@@ -87,10 +70,6 @@ def place_emoji(image_cv2, image_pil, detector, predictor, models):
         
         # Choose 3D model
         model = models[model_index]
-        #model = "Umatchii_Normal_Mouth"
-        #model = "Umatchii_Straight_Normal_Mouth"
-        #model = "Umatchicken_Beak_Mouth"
-        #model = "Umapion_Beak_Mouth"
         
         # Get mouth
         mouthX = dist_mouth_horizontal(shape, rect)
@@ -102,7 +81,7 @@ def place_emoji(image_cv2, image_pil, detector, predictor, models):
         
         # Get 3D Emoji
         emoji = EmojiModifier.EmojiModifier(model, mouth, emotion, [0, angleY, angleZ])
-        emoji.image.save("popo.png", "png")
+        #emoji.image.save("popo.png", "png")
         
         # Place Emoji
         w = abs(shape[8][1] - shape[19][1]) * 2
@@ -113,14 +92,6 @@ def place_emoji(image_cv2, image_pil, detector, predictor, models):
         emoji.image = emoji.image.resize((w, h), Image.ANTIALIAS)
         
         image_pil.paste(emoji.image, (x, y, (x + w), (y + h)), emoji.image)
-        #image_pil.save("imagePil.png", 'png')
-        
-        """
-        if model_index >= (len(models) - 1):
-            model_index = 0
-        else:
-            model_index += 1
-        """
         
 
     if not os.path.exists(folder):
@@ -139,9 +110,9 @@ if __name__ == "__main__":
     landmark_predictor = "shape_predictor_68_face_landmarks.dat"
     loadmod = pickle.load(open("new_LR_learning.sav", 'rb'))
     
-    folder = 'output\\'
+    folder = 'output_images\\'
     
-    models = ["Umatchicken_Beak_Mouth", "Umapion_Beak_Mouth", "Umatchii_Normal_Mouth"]
+    models = ["Umatchicken_Beak_Mouth", "Umapion_Beak_Mouth", "Umatchii_Straight_Normal_Mouth"]
     
 
     # Initialize face detector and facial landmark predictor
@@ -168,7 +139,6 @@ if __name__ == "__main__":
                 cv2.imwrite("tmp.jpg", frame)
                 image_cv2 = cv2.imread("tmp.jpg")
                 image_pil = Image.open("tmp.jpg")
-                #image_pil = Image.fromarray(frame)
                 new_image = place_emoji(image_cv2, image_pil, detector, predictor, models)
                 imagev2 = cv2.cvtColor(np.array(new_image), cv2.COLOR_BGR2RGB)
                 out.write(imagev2)

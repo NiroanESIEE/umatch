@@ -11,7 +11,7 @@ class ObjectReader(object):
         self.faces = []
         self.colors = []
         self.vertex_normals = []
-        # self.face_vertex_normals = {}
+        
         self.face_normals = []
         self.materials_faces = {}
         self.materials = {}
@@ -92,16 +92,12 @@ class ObjectReader(object):
                     string = line.replace("//", "/-1/")
                     face = []
                     vt = []
-                    # vn = []
-                    # i = string.find(" ") + 1
                     faceLine = string.split(" ")
 
                     for f in range(1, len(faceLine)):
                         faceSplit = faceLine[f].split("/")
                         face.append(int(faceSplit[0]) - 1)
                         vt.append(int(faceSplit[1]) - 1)
-                        # vn.append(int(faceSplit[2]) - 1)
-                        # self.face_vertex_normals[int(faceSplit[0]) - 1] = int(faceSplit[2]) - 1
 
                     self.faces.append(tuple(face))
                     lenFaces += 1
@@ -143,21 +139,6 @@ class ObjectReader(object):
                 if np.linalg.norm(n) != 0:
                     n = n / np.linalg.norm(n)
                 self.face_normals.append(n)
-
-                """
-                # vnsList = []
-                n = np.array([0.0, 0.0, 0.0])
-
-                for vertex in face:
-                    # vnsList.append(np.array(self.vertex_normals[self.face_vertex_normals[vertex]]))
-                    n = n + np.array(self.vertex_normals[self.face_vertex_normals[vertex]])
-                # vnsList = np.array(vnsList)
-                # norm = np.mean(vnsList)
-                # norm = norm / 3
-                if np.linalg.norm(n) != 0:
-                    n = n / np.linalg.norm(n)
-                self.face_normals.append(n)
-                """
             
             self.get_mouth_vertices()
             self.get_eyes()
@@ -189,7 +170,6 @@ class ObjectReader(object):
                     if self.x_max_mouth < v[0]:
                         self.x_max_mouth = v[0]
             
-            #self.mouth_up = sorted(self.mouth_up, key=lambda x: x[0])
             self.mouth_up = set(self.mouth_up)
             
             self.x_moy_mouth = (self.x_min_mouth + self.x_max_mouth) / 2
@@ -205,7 +185,6 @@ class ObjectReader(object):
             
             for face in self.materials_faces["BeakDownSG"]:
                 for vertex in self.faces[face]:
-                    #self.mouth_down.append(self.vertices[vertex])
                     self.mouth_down.append(vertex)
                     
                     v = self.vertices[vertex]
@@ -224,7 +203,6 @@ class ObjectReader(object):
                     elif (v[0] > (self.x_moy_mouth + self.eps)):
                         self.mouth_right.append(vertex)
             
-            #self.mouth_down = sorted(self.mouth_down, key=lambda x: x[0])
             self.mouth_down = set(self.mouth_down)
             
             self.mouth_left = set(self.mouth_left)
