@@ -15,24 +15,7 @@ import pickle
 import argparse
 from face_parameter import *
 
-def get_features(shape):
-    features = []
-    features.append(dist_between_eyebrow(shape))
-    features.append(dist_corner_eye_right(shape))
-    features.append(dist_corner_eye_left(shape))
-    features.append(dist_eyebrow_eye_right(shape))
-    features.append(dist_eyebrow_eye_left(shape))
-    features.append(dist_open_eye_right(shape))
-    features.append(dist_open_eye_left(shape))
-    features.append(dist_nose_width(shape))
-    features.append(dist_nose_height(shape))
-    features.append(dist_mouth(shape))
-    features.append(dist_min_mouth(shape))
-    features.append(dist_mouth_width(shape))
-    features.append(dist_mouth_cheeks_right(shape))
-    features.append(dist_mouth_cheeks_left(shape))
-    features.append(dist_mouth_corner(shape))
-    return features
+
 
 #FONCTIONS
 def face_detection(rects, emotion, learning_matrix, gray):
@@ -48,8 +31,8 @@ def face_detection(rects, emotion, learning_matrix, gray):
         if learning_matrix == "learning":
             param.append(features)
         elif learning_matrix == "matrix":
-            emotion = loadmod.predict(features)
-            predict.append(emotion)
+            predict_emotion = loadmod.predict(features)
+            predict.append(predict_emotion)
 
 
 def main(option, file_path):

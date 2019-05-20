@@ -155,3 +155,22 @@ def dist_mouth_horizontal(shape, rect):
         den = 0.1
     dist = dist_points(shape[48], shape[54]) / den
     return dist
+
+def get_features(shape):
+    features = []
+    features.append(dist_between_eyebrow(shape))
+    features.append(dist_corner_eye_right(shape))
+    features.append(dist_corner_eye_left(shape))
+    features.append(dist_eyebrow_eye_right(shape))
+    features.append(dist_eyebrow_eye_left(shape))
+    features.append(dist_open_eye_right(shape))
+    features.append(dist_open_eye_left(shape))
+    features.append(dist_nose_width(shape))
+    features.append(dist_nose_height(shape))
+    features.append(dist_mouth(shape))
+    features.append(dist_min_mouth(shape))
+    features.append(dist_mouth_width(shape))
+    features.append(dist_mouth_cheeks_right(shape))
+    features.append(dist_mouth_cheeks_left(shape))
+    features.append(dist_mouth_corner(shape))
+    return features
