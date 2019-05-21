@@ -5,6 +5,7 @@
       <excludeFolder url="file://$MODULE_DIR$/face_learning/learning_images" />
       <excludeFolder url="file://$MODULE_DIR$/face_learning/learning_images_v2" />
       <excludeFolder url="file://$MODULE_DIR$/face_learning/learning_images_v3" />
+      <excludeFolder url="file://$MODULE_DIR$/face_learning/learning_images_v4" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.7 (Python Scripts)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />

@@ -3,6 +3,7 @@ import imutils
 import dlib
 import cv2
 import os
+import pylab as pl
 from sklearn.metrics import confusion_matrix
 import pickle
 from math import sqrt
@@ -176,9 +177,9 @@ def face_detection(rects, emotion):
         features.append(dist_mouth_corner(shape))
 
         result.append(emotion)
-        emotion = loadmod.predict([features])
-        predict.append(emotion)
-        
+        predicted_emotion = loadmod.predict([features])
+        predict.append(predicted_emotion)
+
 if __name__ == "__main__":
     # INIT DETECTOR DLIB : Visage et traits
     detector = dlib.get_frontal_face_detector()
@@ -186,10 +187,12 @@ if __name__ == "__main__":
     loadmod = pickle.load(open("new_LR_learning.sav", 'rb'))
 
     # Parcours les images de différentes emotions
-    for folder in os.listdir("learning_images_v3"):
-        for img in os.listdir("learning_images_v3/" + folder):
+    for folder in os.listdir("my_learning_image"):
+        for img in os.listdir("my_learning_image/" + folder):
+            print(folder)
+            print(img)
             # Charge l'image, la redimensionne et la met en noir et blanc
-            image = cv2.imread("learning_images_v3/" + folder + "/" + img)
+            image = cv2.imread("my_learning_image/" + folder + "/" + img)
             image = imutils.resize(image, width=500)
             gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
@@ -199,12 +202,13 @@ if __name__ == "__main__":
 
     # Confusion Matrix
     conf_matrix = confusion_matrix(result, predict, labels=["angry", "disgusted", "happy", "neutral", "sad", "surprised"])
-    print(conf_matrix)
-    """class_names = ["Angry", "Disgusted", "Happy", "Neutral", "Sad", "Surprised"]
+    conf_matrix = np.array(conf_matrix)
+
+    class_names = ["Angry", "Disgusted", "Happy", "Neutral", "Sad", "Surprised"]
 
     fig, ax = plot_confusion_matrix(conf_mat=conf_matrix,
                                     colorbar=True,
                                     show_absolute=False,
                                     show_normed=True,
                                     class_names=class_names)
-    plt.show()"""
+    plt.show()
