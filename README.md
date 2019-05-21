@@ -22,13 +22,13 @@ Le programme pour se déroule en plusieurs étapes
 
 **1) Détection de visage**
 
-La position et taille de chaque visage de l'image (ou de chaque frame de la vidéo) est détecté.
+La position et la taille de chaque visage de l'image (ou de chaque frame de la vidéo) est détecté.
 
 <img height="200" src="https://github.com/NiroanESIEE/umatch/blob/master/media/detection_visage.png">
 
 **2) Détection de l'expression**
 
-Le détecteur place 68 points de repères sur chacun des visages, et le programme calcule un certain nombre de paramètres (ex: ouverture des yeux) à partir de ces points qui sont caractéristiques de l'expression du visage.
+Le détecteur place 68 points de repères sur chacun des visages, et le programme calcule un certain nombre de paramètres (ex: ouverture des yeux) à partir de ces points qui formeront les caractéristiques de l'expression du visage.
 
 <img height="200" src="https://github.com/NiroanESIEE/umatch/blob/master/media/facial_landmarks_68.jpg">
 
@@ -40,7 +40,7 @@ Un modèle 3D est chargé et transformé en adéquation avec cette expression ai
 
 **4) Génération de la nouvelle image (ou vidéo)**
 
-Le visage sur l'image est remplacé par le modèle transformé.
+Le visage sur l'image (ou la vidéo) est remplacé par le modèle transformé.
 
 <img height="200" src="https://github.com/NiroanESIEE/umatch/blob/master/media/example.png">
 
