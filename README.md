@@ -1,4 +1,5 @@
 <img src="https://github.com/NiroanESIEE/umatch/master/media/logo_umatch.png">
+<img src="https://github.com/NiroanESIEE/umatch/blob/master/media/logo_umatch.png">
 
 # UMATCH
 > Exprimez vous en restant anonyme
