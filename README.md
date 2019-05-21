@@ -1,4 +1,4 @@
-<img src="https://github.com/NiroanESIEE/umatch/master/media/logo_umatch.png">
+<p align="center"><img height="200" src="https://github.com/NiroanESIEE/umatch/blob/master/media/logo_umatch.png"></p>
 
 # UMATCH
 > Exprimez vous en restant anonyme
@@ -22,19 +22,27 @@ Le programme pour se déroule en plusieurs étapes
 
 **1) Détection de visage**
 
-<img src="https://github.com/NiroanESIEE/umatch/master/media/detection_visage.png">
+La position et la taille de chaque visage de l'image (ou de chaque frame de la vidéo) est détecté.
+
+<img height="200" src="https://github.com/NiroanESIEE/umatch/blob/master/media/detection_visage.png">
 
 **2) Détection de l'expression**
 
-<img src="https://github.com/NiroanESIEE/umatch/master/media/facial_landmarks_68.jpg">
+Le détecteur place 68 points de repères sur chacun des visages, et le programme calcule un certain nombre de paramètres (ex: ouverture des yeux) à partir de ces points qui formeront les caractéristiques de l'expression du visage.
+
+<img height="200" src="https://github.com/NiroanESIEE/umatch/blob/master/media/facial_landmarks_68.jpg">
 
 **3) Modélisation 3D**
 
-<img src="https://github.com/NiroanESIEE/umatch/master/media/modelisation_3d.png">
+Un modèle 3D est chargé et transformé en adéquation avec cette expression ainsi que la rotation de la tête.
+
+<img height="200" src="https://github.com/NiroanESIEE/umatch/blob/master/media/modelisation_3d.png">
 
 **4) Génération de la nouvelle image (ou vidéo)**
 
-<img src="https://github.com/NiroanESIEE/umatch/master/media/example.png">
+Le visage sur l'image (ou la vidéo) est remplacé par le modèle transformé.
+
+<img height="200" src="https://github.com/NiroanESIEE/umatch/blob/master/media/example.png">
 
 ---
 
