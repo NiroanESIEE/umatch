@@ -1,4 +1,4 @@
-<p style="max-width:25%; text-align:center;"><img style="max-width:25%;" src="https://github.com/NiroanESIEE/umatch/blob/master/media/logo_umatch.png"></p>
+<img height: "200" src="https://github.com/NiroanESIEE/umatch/blob/master/media/logo_umatch.png">
 
 # UMATCH
 > Exprimez vous en restant anonyme
@@ -22,19 +22,19 @@ Le programme pour se déroule en plusieurs étapes
 
 **1) Détection de visage**
 
-<img src="https://github.com/NiroanESIEE/umatch/blob/master/media/detection_visage.png">
+<img height: "200" src="https://github.com/NiroanESIEE/umatch/blob/master/media/detection_visage.png">
 
 **2) Détection de l'expression**
 
-<img src="https://github.com/NiroanESIEE/umatch/blob/master/media/facial_landmarks_68.jpg">
+<img height: "200" src="https://github.com/NiroanESIEE/umatch/blob/master/media/facial_landmarks_68.jpg">
 
 **3) Modélisation 3D**
 
-<img src="https://github.com/NiroanESIEE/umatch/blob/master/media/modelisation_3d.png">
+<img height: "200" src="https://github.com/NiroanESIEE/umatch/blob/master/media/modelisation_3d.png">
 
 **4) Génération de la nouvelle image (ou vidéo)**
 
-<img src="https://github.com/NiroanESIEE/umatch/blob/master/media/example.png">
+<img height: "200" src="https://github.com/NiroanESIEE/umatch/blob/master/media/example.png">
 
 ---
 
