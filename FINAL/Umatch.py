@@ -14,13 +14,13 @@ people = []
 
 
 def place_emoji(image_cv2, image_pil, detector, predictor, models):
-    
+
     #image = imutils.resize(image, width=800)
     gray = cv2.cvtColor(image_cv2, cv2.COLOR_BGR2GRAY)
 
     # Detect faces
     rects = detector(gray, 1)
-    
+
     model_index = 0
     # Loop over the face detections
     for (i, rect) in enumerate(rects):
@@ -45,16 +45,16 @@ def place_emoji(image_cv2, image_pil, detector, predictor, models):
                 tmp.append(rect)
                 center = ( (rect.tr_corner().x - rect.tl_corner().x) / 2 + rect.tl_corner().x, (rect.bl_corner().y - rect.tl_corner().y) / 2 + rect.tl_corner().y)
                 tmp.append(center)
-                
+
                 if people[-1][-1] == (len(models) - 1):
-                    
+
                     model_index = 0
                 else:
                     model_index += 1
-                
+
                 tmp.append(model_index)
                 people.append(tmp) #[Rect, Center, Model]
-        
+
         # Detect face points
         shape = predictor(gray, rect)
         shape = face_utils.shape_to_np(shape)
@@ -67,10 +67,10 @@ def place_emoji(image_cv2, image_pil, detector, predictor, models):
         # Get rotation
         angleY = rotation_head_y(shape)
         angleZ = rotation_head_z(shape)
-        
+
         # Choose 3D model
         model = models[model_index]
-        
+
         # Get mouth
         mouthX = dist_mouth_horizontal(shape, rect)
         mouthY = dist_mouth_vertical(shape, rect)
@@ -78,42 +78,41 @@ def place_emoji(image_cv2, image_pil, detector, predictor, models):
 
         if model.find("Normal_Mouth") >= 0:
             mouth.append(shape[48:67])
-        
+
         # Get 3D Emoji
         emoji = EmojiModifier.EmojiModifier(model, mouth, emotion, [0, angleY, angleZ])
-        #emoji.image.save("popo.png", "png")
-        
+
         # Place Emoji
         w = abs(shape[8][1] - shape[19][1]) * 2
         h = w
         x = shape[27][0] - abs(shape[8][1] - shape[19][1])
         y = shape[27][1] - abs(shape[8][1] - shape[19][1])
-        
+
         emoji.image = emoji.image.resize((w, h), Image.ANTIALIAS)
-        
+
         image_pil.paste(emoji.image, (x, y, (x + w), (y + h)), emoji.image)
-        
+
 
     if not os.path.exists(folder):
         os.mkdir(folder)
-    
+
     return image_pil
-    
-    
+
+
 if __name__ == "__main__":
-    
+
     ap = argparse.ArgumentParser()
     ap.add_argument("-p", "--picture",help="Image path")
     ap.add_argument("-v","--video", help="Video path")
     args = ap.parse_args()
-    
+
     landmark_predictor = "shape_predictor_68_face_landmarks.dat"
     loadmod = pickle.load(open("new_LR_learning.sav", 'rb'))
-    
+
     folder = 'output_images\\'
-    
+
     models = ["Umatchicken_Beak_Mouth", "Umapion_Beak_Mouth", "Umatchii_Straight_Normal_Mouth"]
-    
+
 
     # Initialize face detector and facial landmark predictor
     detector = dlib.get_frontal_face_detector()
@@ -125,14 +124,14 @@ if __name__ == "__main__":
         image_pil = Image.open(args.picture)
         new_image = place_emoji(image_cv2, image_pil, detector, predictor, models)
         new_image.save(folder + "output.png", 'png')
-        
+
     elif args.video:
         # Video
         cap = cv2.VideoCapture(args.video)
-        
+
         fourcc = cv2.VideoWriter_fourcc(*'XVID')
         out = cv2.VideoWriter(folder + 'output.mp4', fourcc, cap.get(5), (int(cap.get(3)), int(cap.get(4))))
-        
+
         while(cap.isOpened()):
             ret, frame = cap.read()
             if ret == True:
@@ -144,7 +143,7 @@ if __name__ == "__main__":
                 out.write(imagev2)
             else:
                 break
-        
+
         os.remove("tmp.jpg")
         cap.release()
         out.release()
