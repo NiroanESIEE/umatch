@@ -181,25 +181,37 @@ def face_detection(rects, emotion):
         predict.append(predicted_emotion)
 
 if __name__ == "__main__":
+    
     # INIT DETECTOR DLIB : Visage et traits
     detector = dlib.get_frontal_face_detector()
     predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
+    
+    # Stable images
     loadmod = pickle.load(open("new_LR_learning.sav", 'rb'))
-
+    # Affect Net images
+    #loadmod = pickle.load(open("learning_save.sav", 'rb'))
+    
+    test_image_folder = "test_image"
+    #test_image_folder = "test_image_from_affectnet"
+    #test_image_folder = "learning_images"
+    
     # Parcours les images de différentes emotions
-    for folder in os.listdir("my_learning_image"):
-        for img in os.listdir("my_learning_image/" + folder):
-            print(folder)
-            print(img)
+    for folder in os.listdir(test_image_folder):
+        #print(folder)
+        
+        for img in os.listdir(test_image_folder + "/" + folder):
+            
             # Charge l'image, la redimensionne et la met en noir et blanc
-            image = cv2.imread("my_learning_image/" + folder + "/" + img)
-            image = imutils.resize(image, width=500)
+            image = cv2.imread(test_image_folder + "/" + folder + "/" + img)
+            
+            #image = imutils.resize(image, width=500)
             gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
             # Detection des visages
             rects = detector(gray, 1)
             face_detection(rects, folder)
-
+    
+    
     # Confusion Matrix
     conf_matrix = confusion_matrix(result, predict, labels=["angry", "disgusted", "happy", "neutral", "sad", "surprised"])
     conf_matrix = np.array(conf_matrix)
