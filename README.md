@@ -102,7 +102,7 @@ Ce projet a été réalisé en langage Python. Les packages suivants sont néces
 
 	Apprend les paramètres des différentes expressions à partir d'une base d'images et crée le modèle
 
-- *expression_learning.sav*
+- *new_LR_learning.sav*
 
 	Modèle d'apprentissage des expressions
 
@@ -113,8 +113,10 @@ Ce projet a été réalisé en langage Python. Les packages suivants sont néces
 **Images**
 
 - *learning_images* : dossier contenant la base d'images pour l'apprentissage
-- *images* : dossier contenant les images et vidéos à tester
-- *output_images* : dossier contenant les images et vidéos résultants
+- *test_image* : dossier contenant les images utilisées pour tester le modèle d'apprentissage
+- *images* : dossier contenant quelques images et vidéos à tester
+- *output_images* : dossier contenant les images et vidéos générés par le programme
+- *media* : autres images
 	
 **Modèles 3D**
 
