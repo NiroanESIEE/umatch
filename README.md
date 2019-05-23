@@ -22,7 +22,7 @@ Le programme pour se déroule en plusieurs étapes
 
 **1) Détection de visage**
 
-La position et la taille de chaque visage de l'image (ou de chaque frame de la vidéo) est détecté.
+La position et la taille de chaque visage de l'image (ou de chaque frame de la vidéo) sont détectées.
 
 <img height="200" src="https://github.com/NiroanESIEE/umatch/blob/master/media/detection_visage.png">
 
