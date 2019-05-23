@@ -88,7 +88,7 @@ Ce projet a été réalisé en langage Python. Les packages suivants sont néces
 
 - *ObjectReader.py*
 
-	Lit et stocke d'un modèle 3D (fichiers .obj et .mtl) sous forme d'une classe Python
+	Lit et stocke un modèle 3D (fichiers .obj et .mtl) sous forme d'une classe Python
 
 - *EmojiModifier.py*
 
